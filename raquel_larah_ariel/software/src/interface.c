@@ -135,7 +135,7 @@ uint8_t tela_edicao(uint8_t sel)
         case 3:
             // ................
             // ...Velocidade...
-            // ......VV%.......
+            // ......VVV%......
             lcd_SendCmd(0x80 + 3);
             lcd_Write("Velocidade");
             lcd_SendCmd(0xC0 + 9);
@@ -171,4 +171,33 @@ uint8_t tela_edicao(uint8_t sel)
     tela.tipo = EDICAO;
     tela.opts = sel;
     return 0;
+}
+
+void tela_aquecendo() {
+	char temp[5];
+	if (tela.tipo != AQUECENDO) {
+		lcd_SendCmd(0x01);
+		lcd_Write("Aquecendo");	
+		lcd_SendCmd(0xC0 + 5);
+		lcd_SendChar('/');
+		lcd_Write(variables->str.temperatura);
+		lcd_SendChar(DEGREE);
+		lcd_SendChar('C');
+	}
+	lcd_SendCmd(0xC0 + 0);
+	snprintf(temp,5,"%2d%cC", termo_temperatura, DEGREE);
+	lcd_Write(temp);
+	tela.tipo = AQUECENDO;
+}
+
+uint8_t tela_erro(const char *msg, uint8_t codigo) {
+	if (tela.opts != ERRO) {
+		lcd_SendCmd(0x01);
+		lcd_Write(msg);
+		lcd_SendCmd(0xC0);
+		char cd[5];
+		snprintf(cd, 5, "%#04x", codigo);
+		lcd_Write(cd);
+	} 
+	return 0;
 }

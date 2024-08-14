@@ -105,6 +105,7 @@ static uint8_t termo_state_Read()
         termo_state_changed = 0;
         termo_error = ds18b20read(&PORTB, &DDRB, &PINB, (1 << PINB0), NULL, &(termo_temperatura));
         termo_temperatura /= 16;
+		ev_write(EV_TERMO_NEW);
         /*
         se ocorreu um erro emite o evento e informa que a logica de próximo estado deve ser
         chamada imediatamente, em teoria esse evento já causaria a execução da logica de

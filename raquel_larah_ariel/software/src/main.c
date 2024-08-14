@@ -14,11 +14,11 @@
 #include "usart.h"
 #endif // LOG
 
-static volatile uint8_t ev_flags_write = 0;
-static volatile uint8_t ev_flags_read = 0;
-const volatile uint8_t *const ev_flags = &ev_flags_read;
+static volatile uint16_t ev_flags_write = 0;
+static volatile uint16_t ev_flags_read = 0;
+const volatile uint16_t *const ev_flags = &ev_flags_read;
 
-void ev_write(uint8_t mask)
+void ev_write(uint16_t mask)
 {
     ev_flags_write |= mask;
 }

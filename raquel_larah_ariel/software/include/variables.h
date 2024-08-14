@@ -6,9 +6,9 @@
 /******************************************************************************/
 /*******************************TEMPERATURA ***********************************/
 #define VAR_TEMPERATURA_DEFAULT 60
-#define VAR_TEMPERATURA_MIN 60
-#define VAR_TEMPERATURA_MAX 60
-#define VAR_TEMPERATURA_STEP 20
+#define VAR_TEMPERATURA_MIN 50
+#define VAR_TEMPERATURA_MAX 99
+#define VAR_TEMPERATURA_STEP 1
 #define VAR_TEMPERATURA_STR_LENGTH 2
 #define VAR_TEMPERATURA_T uint8_t
 #define VAR_TEMPERATURA_TMAX UINT8_MAX
@@ -51,7 +51,7 @@ void var_intervalo_dec(void);
 #define VAR_VELOCIDADE_MIN 0
 #define VAR_VELOCIDADE_MAX 100
 #define VAR_VELOCIDADE_STEP 10
-#define VAR_VELOCIDADE_STR_LENGTH 2
+#define VAR_VELOCIDADE_STR_LENGTH 3
 #define VAR_VELOCIDADE_T uint8_t
 #define VAR_VELOCIDADE_TMAX UINT8_MAX
 #define VAR_VELOCIDADE_TMIN 0

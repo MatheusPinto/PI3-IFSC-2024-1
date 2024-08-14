@@ -101,15 +101,3 @@ void lcd_Write(const char *c)
     for (; *c != 0; c++)
         lcd_SendChar(*c);
 }
-
-/**
- * @brief  Escreve um string estática (sem printf) no LCD.
- * @param c: ponteiro para a string em FLASH
- *
- * @retval Nenhum
- */
-void escreve_LCD_Flash(const char *c)
-{
-    for (; pgm_read_byte(&(*c)) != 0; c++)
-        lcd_SendChar(pgm_read_byte(&(*c)));
-}

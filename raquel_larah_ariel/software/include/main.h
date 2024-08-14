@@ -18,13 +18,14 @@
 
 #define EV_TERMO_TIMER (1 << 6)
 #define EV_TERMO_ERROR (1 << 7)
+#define EV_TERMO_NEW (1 << 8)
 
 typedef uint8_t (*const FSM_applyType)(void);
 
 /* Variável utilizada para ler quais eventos ocorreram desde a última passagem pelo loop principal */
-extern const volatile uint8_t *const ev_flags;
+extern const volatile uint16_t *const ev_flags;
 /* Emite um evento */
-void ev_write(uint8_t mask);
+void ev_write(uint16_t mask);
 
 extern int16_t termo_temperatura;
 extern uint8_t termo_error;

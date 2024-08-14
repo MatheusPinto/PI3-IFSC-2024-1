@@ -76,7 +76,14 @@ void var_temperatura_inc(void)
 {
     if (vs.values.temperatura < (VAR_TEMPERATURA_TMAX - VAR_TEMPERATURA_STEP))
     {
-        var_temperatura_set(vs.values.temperatura + VAR_TEMPERATURA_STEP);
+		if (vs.values.temperatura == 0) 
+		{
+			var_temperatura_set(VAR_TEMPERATURA_MIN);
+		}
+		else 
+		{
+			var_temperatura_set(vs.values.temperatura + VAR_TEMPERATURA_STEP);
+		}
     }
     else
     {
@@ -167,7 +174,7 @@ void var_intervalo_dec(void)
 
 /******************************************************************************/
 /*******************************VELOCIDADE*************************************/
-#define VELOCIDADE_STR_FMT "%0" STR(VAR_VELOCIDADE_STR_LENGTH) "d"
+#define VELOCIDADE_STR_FMT "%" STR(VAR_VELOCIDADE_STR_LENGTH) "d"
 void var_velocidade_set(VAR_VELOCIDADE_T v)
 {
     if (v < VAR_VELOCIDADE_MIN)

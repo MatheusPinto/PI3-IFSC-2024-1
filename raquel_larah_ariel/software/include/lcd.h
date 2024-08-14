@@ -62,11 +62,3 @@ void lcd_Init();
  * @retval Nenhum
  */
 void lcd_Write(const char *c);
-
-/**
- * @brief  Escreve um string estática (sem printf) no LCD.
- * @param c: ponteiro para a string em FLASH
- *
- * @retval Nenhum
- */
-void escreve_LCD_Flash(const char *c);

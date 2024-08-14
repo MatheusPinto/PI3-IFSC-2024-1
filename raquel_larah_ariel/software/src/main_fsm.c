@@ -15,6 +15,7 @@ typedef enum
     MAIN_STATE_AJUSTE_TEMPO,
     MAIN_STATE_AJUSTE_INTERVALO,
     MAIN_STATE_AJUSTE_VELOCIDADE,
+	MAIN_STATE_AQUECIMENTO,
     MAIN_STATE_ERROR,
     MAIN_STATE_ERROR_BT,
     MAIN_STATE_ERROR_TERMO,
@@ -32,6 +33,7 @@ static uint8_t main_state_AjusteTemperatura(void);
 static uint8_t main_state_AjusteTempo(void);
 static uint8_t main_state_AjusteIntervalo(void);
 static uint8_t main_state_AjusteVelocidade(void);
+static uint8_t main_state_Aquecimento(void);
 static uint8_t main_state_Error(void);
 static uint8_t main_state_ErrorBt(void);
 static uint8_t main_state_ErrorTermo(void);
@@ -46,6 +48,7 @@ static FSM_applyType main_state_Fns[MAIN_STATE_LENGTH] = {
     main_state_AjusteTempo,
     main_state_AjusteIntervalo,
     main_state_AjusteVelocidade,
+	main_state_Aquecimento,
     main_state_Error,
     main_state_ErrorBt,
     main_state_ErrorTermo,
@@ -61,12 +64,7 @@ uint8_t main_state_Apply(void)
 void main_state_Next(void)
 {
     main_state_changed = 0;
-
-    if (*ev_flags & EV_BT_ERROR)
-    {
-        main_curr_state = MAIN_STATE_ERROR_BT;
-        main_state_changed = 1;
-    }
+	
     switch (main_curr_state)
     {
     case MAIN_STATE_RESUMO:
@@ -82,7 +80,7 @@ void main_state_Next(void)
         }
         else if (*ev_flags & EV_BT_OK)
         {
-            main_curr_state = MAIN_STATE_ERROR; // essa parte ainda não foi implementada
+            main_curr_state = MAIN_STATE_AQUECIMENTO;
             main_state_changed = 1;
         }
         break;
@@ -182,16 +180,36 @@ void main_state_Next(void)
             main_state_changed = 1;
         }
         break;
+	case MAIN_STATE_AQUECIMENTO:
+		if (*ev_flags & EV_BT_OK)
+		{
+			main_curr_state = MAIN_STATE_RESUMO;
+			main_state_changed = 1;
+		}
+		break;
     case MAIN_STATE_ERROR_BT:
-        main_state_changed = 1;
-        break;
+		return;
     case MAIN_STATE_ERROR_TERMO:
-        main_state_changed = 1;
-        break;
+        return;
+	case MAIN_STATE_LENGTH:
+		main_state_changed = 1;
     case MAIN_STATE_ERROR:
         main_curr_state = MAIN_STATE_ERROR;
-        break;
+        return;
     }
+	
+	if (*ev_flags & EV_BT_ERROR)
+	{
+		main_curr_state = MAIN_STATE_ERROR_BT;
+		main_state_changed = 1;
+		return;
+	}
+	if (*ev_flags & EV_TERMO_ERROR)
+	{
+		main_curr_state = MAIN_STATE_ERROR_TERMO;
+		main_state_changed = 1;
+		return;
+	}
 }
 
 static uint8_t main_state_Resumo(void)
@@ -312,13 +330,24 @@ static uint8_t main_state_AjusteVelocidade(void)
     return FSM_EV_WAIT;
 }
 
+static uint8_t main_state_Aquecimento(void)
+{
+	if (main_state_changed)
+	{
+		tela_aquecendo();
+	}
+	if (*ev_flags & EV_TERMO_NEW)
+	{
+		tela_aquecendo();
+	}
+	return FSM_EV_WAIT;
+}
+
 static uint8_t main_state_Error(void)
 {
     if (main_state_changed)
     {
-        lcd_SendCmd(0x01);
-        lcd_SendCmd(0x80);
-        lcd_Write("ERROR");
+		tela_erro("ERR_MAIN", 0x01);
     }
     return FSM_EV_WAIT;
 }
@@ -326,12 +355,15 @@ static uint8_t main_state_ErrorBt(void)
 {
     if (main_state_changed)
     {
-        lcd_SendCmd(0x01);
-        lcd_Write("Erro nos botoes");
+		tela_erro("ERR_BT", 0x01);
     }
     return FSM_EV_WAIT;
 }
 static uint8_t main_state_ErrorTermo(void)
 {
+	if (main_state_changed)
+	{
+		tela_erro("ERR_TERMO", termo_error);
+	}
     return FSM_EV_WAIT;
 }
