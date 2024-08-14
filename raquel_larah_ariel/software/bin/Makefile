@@ -23,7 +23,7 @@ CFLAGS = \
 LDLIBS = 
 LDFLAGS = -mmcu=atmega328p
 
-OBJ = ds18b20.o onewire.o main_fsm.o main.o termometro.o buttons.o
+OBJ = ds18b20.o onewire.o main.o termometro.o lcd.o buttons.o main_fsm.o interface.o variables.o
 
 ifeq ($(LOG), 1)
 OBJ += usart.o 

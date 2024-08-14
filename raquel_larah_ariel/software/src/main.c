@@ -5,44 +5,47 @@
 #include "main.h"
 #include "buttons.h"
 #include "termometro.h"
+#include "lcd.h"
+#include "main_fsm.h"
+#include "variables.h"
 
 #ifdef LOG
 #include <stdio.h>
 #include "usart.h"
 #endif // LOG
 
-/******************************************************************************/
-struct fsm_handle
+static volatile uint8_t ev_flags_write = 0;
+static volatile uint8_t ev_flags_read = 0;
+const volatile uint8_t *const ev_flags = &ev_flags_read;
+
+void ev_write(uint8_t mask)
 {
-    uint8_t (*const fsmApply)(fsm_handleType *fsmh);
-    uint8_t (*const fsmNext)(fsm_handleType *fsmh);
-    volatile uint16_t timer;
-    union
-    {
-        uint8_t all;
-        struct
-        {
-            volatile uint8_t timeout : 1;
-            uint8_t step_mode : 1;
-            uint8_t status : 1;
-        };
-    } flags;
-};
+    ev_flags_write |= mask;
+}
 
-/******************************** ADICIONE A FSM AQUI *************************/
-#define N_FSM 2
-static fsm_handleType fsms[N_FSM] = {
-    {.fsmApply = buttons_StateCall, .fsmNext = buttons_StateNext, .flags = {.status = 1}},
-    {.fsmApply = termo_process, .fsmNext = termo_next, .flags = {.status = 1}},
-};
+static void ev_update()
+{
+    cli();
+    ev_flags_read = ev_flags_write;
+    ev_flags_write = 0;
+    sei();
+}
 
-/******************************* STATIC DECLARATIONS **************************/
-volatile fsm_eventsType fsm_eventsWrite;
-static volatile fsm_eventsType fsm_eventsRead;
-volatile const fsm_eventsType *volatile const fsm_events = &fsm_eventsRead;
+/************************************/
+/* Variaveis utilizadas por termo.c */
+int16_t termo_temperatura = 0;
+uint8_t termo_error = 0;
+volatile uint16_t termo_timer = 0;
+/************************************/
+
+/**************************************/
+/* Variaveis utilizadas por buttons.c */
+volatile uint16_t buttons_timer = 0;
+/**************************************/
 
 int main(void)
 {
+    lcd_Init();
     /**** INICIALIZAÇÔES ****/
     // Mode 4 - TCC - OCRA
     TCCR1A = 0;
@@ -53,6 +56,7 @@ int main(void)
 
     buttons_Init();
 
+    var_Init();
 #ifdef LOG
     FILE *usart = USART_Init(B9600);
 #endif // LOG
@@ -62,80 +66,63 @@ int main(void)
 
     while (1)
     {
-        uint8_t any_pool = 0;
-        for (uint8_t i = 0; i < N_FSM; i++)
-        {
-            fsm_handleType *fsm = &fsms[i];
-            if (fsm->flags.status == FSM_STATE_STATUS_CHANGED)
-            {
-                fsm_ResetTimeout(fsm);
-                uint8_t step_mode = fsm->fsmApply(fsm);
-                fsm->flags.step_mode = step_mode;
-                if (step_mode == FSM_STEP_MODE_POOL)
-                {
-                    any_pool = 1;
-                }
-            }
-        }
+        uint8_t fsm_continue = 0;
+        fsm_continue |= termo_state_Apply();
+        fsm_continue |= buttons_state_Apply();
+        fsm_continue |= main_state_Apply();
+        // fsm_continue |= FSM1_state_Apply();
+        // fsm_continue |= FSM2_state_Apply();
 
+        /* Se todas as maquinas estão esperando por um evento desliga a CPU até que um evento aconteça */
         cli();
-        while (fsm_eventsWrite.all == 0 && any_pool == 0)
+        while (fsm_continue == FSM_EV_WAIT && ev_flags_write == 0)
         {
             sei();
             sleep_mode();
         }
 
-        cli();
-        fsm_eventsRead.all = fsm_eventsWrite.all;
+        ev_update();
 
-#ifdef LOG
-        fprintf(usart, "t: %d > 0b", termo_temperatura);
-        for (uint8_t i = 0; i < 32; i++)
-            fprintf(usart, "%c", fsm_eventsRead.all & (1 << i) ? '1' : '0');
-        fprintf(usart, "\n");
-#endif
-        fsm_eventsWrite.all = 0;
-        sei();
-
-        for (uint8_t i = 0; i < N_FSM; i++)
-        {
-            fsm_handleType *fsm = &fsms[i];
-            uint8_t status = fsm->fsmNext(fsm);
-            fsm->flags.status = status;
-        }
+        termo_state_Next();
+        buttons_state_Next();
+        main_state_Next();
+        // FSM1_state_Next();
+        // FSM2_state_Next();
     }
-}
-
-void fsm_SetTimeout(fsm_handleType *fsmh, uint16_t ms)
-{
-    fsmh->timer = 0;
-    fsmh->flags.timeout = 0;
-    fsmh->timer = ms;
-}
-
-void fsm_ResetTimeout(fsm_handleType *fsmh)
-{
-    fsmh->timer = 0;
-    fsmh->flags.timeout = 0;
-}
-
-uint8_t fsm_TimedOut(fsm_handleType *fsmh)
-{
-    return fsmh->flags.timeout;
 }
 
 ISR(TIMER1_COMPA_vect)
 {
-    for (uint8_t i = 0; i < N_FSM; i++)
+    /* essa interrupção acontece a cada FSM_BASE_TIME_MS milisegundos*/
+    /* se o contador for maior que zero decrementa o contador da FSM */
+    /* se o contador chegou em zero emite o evento de timer da FSM
+    if (FSM1_timer > 0) {
+        FSM1_timer -= 1;
+        if (FSM1_timer == 0) {
+            ev_write(EV_FSM1_TIMER);
+        }
+    }
+    if (FSM2_timer > 0) {
+        FSM2_timer -= 1;
+        if (FSM2_timer == 0) {
+            ev_write(EV_FSM2_TIMER);
+        }
+    }
+    */
+    if (termo_timer > 0)
     {
-        if (fsms[i].timer > 0)
+        termo_timer -= 1;
+        if (termo_timer == 0)
         {
-            fsms[i].timer -= 1;
-            if (fsms[i].timer == 0)
-            {
-                fsm_eventsWrite.timeout = 1;
-                fsms[i].flags.timeout = 1;
-            }
+            ev_write(EV_TERMO_TIMER);
+        }
+    }
+    if (buttons_timer > 0)
+    {
+        buttons_timer -= 1;
+        if (buttons_timer == 0)
+        {
+            ev_write(EV_BT_TIMER);
         }
     }
 }

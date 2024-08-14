@@ -2,50 +2,31 @@
 #define TEST_H_INCLUDED
 #include <stdint.h>
 
-#define FSM_STEP_MODE_EVENT 0
-#define FSM_STEP_MODE_POOL 1
+#define FSM_BASE_TIME_MS 1UL
 
-#define FSM_STATE_STATUS_STEADY 0
-#define FSM_STATE_STATUS_CHANGED 1
+/* Indica que a maquina de estados está esperando por um dos eventos */
+#define FSM_EV_WAIT 0
+/* Indica que a maquina de estados não está esperando por um evento */
+#define FSM_CONTINUE 1
 
-typedef union
-{
-    uint32_t all;
-    struct
-    {
-        uint8_t timeout : 1;
-        union
-        {
-            uint8_t all;
-            struct
-            {
-                uint8_t new : 1;
-                uint8_t enable : 1;
-                uint8_t error : 1;
-            };
-        } termo;
+#define EV_BT_ERROR (1 << 0)
+#define EV_BT_EXT (1 << 1)
+#define EV_BT_DOWN (1 << 2)
+#define EV_BT_OK (1 << 3)
+#define EV_BT_TIMER (1 << 4)
+#define EV_BT_UP (1 << 5)
 
-        union
-        {
-            uint8_t all;
-            struct
-            {
-                uint8_t ok : 1;
-                uint8_t dw : 1;
-                uint8_t up : 1;
-                uint8_t _ext : 1;
-            };
-        } buttons;
-    };
-} fsm_eventsType;
+#define EV_TERMO_TIMER (1 << 6)
+#define EV_TERMO_ERROR (1 << 7)
 
-typedef struct fsm_handle fsm_handleType;
+typedef uint8_t (*const FSM_applyType)(void);
 
-extern volatile fsm_eventsType fsm_eventsWrite;
-extern volatile const fsm_eventsType *volatile const fsm_events;
+/* Variável utilizada para ler quais eventos ocorreram desde a última passagem pelo loop principal */
+extern const volatile uint8_t *const ev_flags;
+/* Emite um evento */
+void ev_write(uint8_t mask);
 
-void fsm_SetTimeout(fsm_handleType *fsmh, uint16_t ms);
-void fsm_ResetTimeout(fsm_handleType *fsmh);
-uint8_t fsm_TimedOut(fsm_handleType *fsmh);
+extern int16_t termo_temperatura;
+extern uint8_t termo_error;
 
 #endif

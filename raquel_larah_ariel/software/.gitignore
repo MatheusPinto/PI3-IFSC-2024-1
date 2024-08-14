@@ -1,3 +1,7 @@
 /.vscode
+/.vs
 bin/*
 !bin/Makefile
+Debug
+Release
+PI.componentinfo.xml
