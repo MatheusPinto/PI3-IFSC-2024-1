@@ -14,6 +14,8 @@
 #include "usart.h"
 #endif // LOG
 
+volatile uint16_t valor_adc = 0;
+
 static volatile uint16_t ev_flags_write = 0;
 static volatile uint16_t ev_flags_read = 0;
 const volatile uint16_t *const ev_flags = &ev_flags_read;
@@ -43,6 +45,8 @@ volatile uint16_t termo_timer = 0;
 volatile uint16_t buttons_timer = 0;
 /**************************************/
 
+volatile uint16_t main_timer = 0;
+
 int main(void)
 {
     lcd_Init();
@@ -60,6 +64,12 @@ int main(void)
 #ifdef LOG
     FILE *usart = USART_Init(B9600);
 #endif // LOG
+
+    ADMUX = (1 << REFS0);
+    ADCSRA = (1 << ADEN) | (1 << ADSC) | (1 << ADATE) | (1 << ADIE) | 
+        (1 << ADPS2) | (1 << ADPS0) | (1 << ADPS1); // prescaler 128
+    DIDR0 = (1 << ADC0D);
+
 
     set_sleep_mode(SLEEP_MODE_IDLE);
     sei();
@@ -125,4 +135,22 @@ ISR(TIMER1_COMPA_vect)
             ev_write(EV_BT_TIMER);
         }
     }
+    if (main_timer > 0)
+    {
+        main_timer -= 1;
+        if (main_timer == 0)
+        {
+            ev_write(EV_MAIN_TIMER);
+        }
+    }
+}
+
+ISR(ADC_vect)
+{
+	/* Lê o valor do conversor AD na interrupção:
+	 * ADC é de 10 bits, logo valor_adc deve ser
+	 * de 16 bits
+	 */
+	valor_adc = ADC;
+
 }

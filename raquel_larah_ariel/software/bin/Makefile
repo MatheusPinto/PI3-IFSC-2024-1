@@ -48,7 +48,7 @@ $(HEX): $(ELF)
 	$(OBJCOPY) -R .eeprom -R .fuse -R .lock -R .signature -O ihex $< $@
 
 arduino: $(HEX)
-	$(AVRDUDE) -pm328p -carduino -P COM3 -Uflash:w:$<:a
+	$(AVRDUDE) -pm328p -b57600 -carduino -P COM4 -Uflash:w:$<:a
 
 -include $(OBJ:%.o=%.d)
 

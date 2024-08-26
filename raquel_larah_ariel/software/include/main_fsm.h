@@ -13,4 +13,6 @@
 
 uint8_t main_state_Apply(void);
 void main_state_Next(void);
+
+extern volatile uint16_t main_timer;
 #endif

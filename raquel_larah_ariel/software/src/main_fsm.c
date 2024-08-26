@@ -15,7 +15,7 @@ typedef enum
     MAIN_STATE_AJUSTE_TEMPO,
     MAIN_STATE_AJUSTE_INTERVALO,
     MAIN_STATE_AJUSTE_VELOCIDADE,
-	MAIN_STATE_AQUECIMENTO,
+    MAIN_STATE_AQUECIMENTO,
     MAIN_STATE_ERROR,
     MAIN_STATE_ERROR_BT,
     MAIN_STATE_ERROR_TERMO,
@@ -48,7 +48,7 @@ static FSM_applyType main_state_Fns[MAIN_STATE_LENGTH] = {
     main_state_AjusteTempo,
     main_state_AjusteIntervalo,
     main_state_AjusteVelocidade,
-	main_state_Aquecimento,
+    main_state_Aquecimento,
     main_state_Error,
     main_state_ErrorBt,
     main_state_ErrorTermo,
@@ -64,7 +64,7 @@ uint8_t main_state_Apply(void)
 void main_state_Next(void)
 {
     main_state_changed = 0;
-	
+
     switch (main_curr_state)
     {
     case MAIN_STATE_RESUMO:
@@ -180,36 +180,36 @@ void main_state_Next(void)
             main_state_changed = 1;
         }
         break;
-	case MAIN_STATE_AQUECIMENTO:
-		if (*ev_flags & EV_BT_OK)
-		{
-			main_curr_state = MAIN_STATE_RESUMO;
-			main_state_changed = 1;
-		}
-		break;
+    case MAIN_STATE_AQUECIMENTO:
+        if (*ev_flags & EV_BT_OK)
+        {
+            main_curr_state = MAIN_STATE_RESUMO;
+            main_state_changed = 1;
+        }
+        break;
     case MAIN_STATE_ERROR_BT:
-		return;
+        return;
     case MAIN_STATE_ERROR_TERMO:
         return;
-	case MAIN_STATE_LENGTH:
-		main_state_changed = 1;
+    case MAIN_STATE_LENGTH:
+        main_state_changed = 1;
     case MAIN_STATE_ERROR:
         main_curr_state = MAIN_STATE_ERROR;
         return;
     }
-	
-	if (*ev_flags & EV_BT_ERROR)
-	{
-		main_curr_state = MAIN_STATE_ERROR_BT;
-		main_state_changed = 1;
-		return;
-	}
-	if (*ev_flags & EV_TERMO_ERROR)
-	{
-		main_curr_state = MAIN_STATE_ERROR_TERMO;
-		main_state_changed = 1;
-		return;
-	}
+
+    if (*ev_flags & EV_BT_ERROR)
+    {
+        main_curr_state = MAIN_STATE_ERROR_BT;
+        main_state_changed = 1;
+        return;
+    }
+    if (*ev_flags & EV_TERMO_ERROR)
+    {
+        main_curr_state = MAIN_STATE_ERROR_TERMO;
+        main_state_changed = 1;
+        return;
+    }
 }
 
 static uint8_t main_state_Resumo(void)
@@ -332,22 +332,22 @@ static uint8_t main_state_AjusteVelocidade(void)
 
 static uint8_t main_state_Aquecimento(void)
 {
-	if (main_state_changed)
-	{
-		tela_aquecendo();
-	}
-	if (*ev_flags & EV_TERMO_NEW)
-	{
-		tela_aquecendo();
-	}
-	return FSM_EV_WAIT;
+    if (main_state_changed)
+    {
+        tela_aquecendo();
+    }
+    if (*ev_flags & EV_TERMO_NEW)
+    {
+        tela_aquecendo();
+    }
+    return FSM_EV_WAIT;
 }
 
 static uint8_t main_state_Error(void)
 {
     if (main_state_changed)
     {
-		tela_erro("ERR_MAIN", 0x01);
+        tela_erro("ERR_MAIN", 0x01);
     }
     return FSM_EV_WAIT;
 }
@@ -355,15 +355,34 @@ static uint8_t main_state_ErrorBt(void)
 {
     if (main_state_changed)
     {
-		tela_erro("ERR_BT", 0x01);
+        tela_erro("ERR_BT", 0x01);
     }
     return FSM_EV_WAIT;
 }
 static uint8_t main_state_ErrorTermo(void)
 {
-	if (main_state_changed)
-	{
-		tela_erro("ERR_TERMO", termo_error);
-	}
+    if (main_state_changed)
+    {
+        tela_erro("ERR_TERMO", termo_error);
+        main_timer = 1000;
+    }
+    if (*ev_flags & EV_MAIN_TIMER)
+    {
+        uint32_t map = valor_adc;
+        map = (map * 2400) / 1023;
+        uint16_t inteiro = (uint16_t)(map / 100);
+        uint16_t decimal = (uint16_t)(map % 100);
+        lcd_SendCmd(0x01);
+        char tst[17];
+        snprintf(tst, 17, "%d,%02d", inteiro, decimal);
+        lcd_Write(tst);
+        main_timer = 1000;
+    }
     return FSM_EV_WAIT;
 }
+/*
+0b0000.0000.0000.0000.0000.0010.1010.1010
+0b0000.0000.0011.1111.1111.1111.1111.1111
+0b0000.0000.0000.0000.1111.1111.1111.1111
+
+*/
