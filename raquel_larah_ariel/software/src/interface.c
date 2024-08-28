@@ -39,7 +39,7 @@ void updateIntervalo(VAR_INTERVALO_T val)
 
 void updateVelocidade(VAR_VELOCIDADE_T val)
 {
-    snprintf(vVelocidade.repr, 6, "%03d%%", val);
+    snprintf(vVelocidade.repr, 6, "%3d%%", val);
     vVelocidade.changed = 1;
 }
 
@@ -58,9 +58,9 @@ void updateTemperatura(uint8_t val)
 void updateCorrente(uint16_t val)
 {
     int16_t map = (int16_t)((uint32_t)val * 2400 / 1023); // mapeia entre 0 e 2400
-    map -= 1200; // offset (mapeia entre -1200 e 1200);
-    uint8_t rest = map >=0 ? map%10 : (-map)%10;
-    snprintf(vCorrente.repr, 8, "%+03d,%dmA", map/100, rest);
+    map -= 1200;                                          // offset (mapeia entre -1200 e 1200);
+    uint8_t rest = map >= 0 ? map % 10 : (-map) % 10;
+    snprintf(vCorrente.repr, 8, "%+3d,%dmA", map / 100, rest);
     vCorrente.changed = 1;
 }
 
@@ -159,7 +159,7 @@ void telaSelecao(selecaoOpts sel)
         lcd_SendChar(sign);
     }
 
-    for (uint8_t i = 0; i < 3; i++)
+    for (uint8_t i = 0; i < 4; i++)
     {
         struct variavel *v = Selecao.vars[i].v;
         if (v->changed != 0 || tela_atual != SELECAO)
@@ -258,7 +258,7 @@ const static struct tela Aquecendo = {
         {.v = &vTargetTemp, .line = 1, .column = 5},
         {.v = &vCorrente, .line = 1, .column = 10},
     },
-    .opts = (void *)&eOpts,
+    .opts = NULL,
 };
 void telaAquecendo(void)
 {
@@ -283,4 +283,47 @@ void telaAquecendo(void)
         }
     }
     tela_atual = AQUECENDO;
+}
+
+/********Funcionamento*/
+/*
+.|0123456789012345|
+0|T:20°C i:s12,1mA|
+1|t:1:10h   V:050%|
+*/
+const static struct tela Funcionamento = {
+    .vars = {
+        {.v = &vTemperatura, .line = 0, .column = 2},
+        {.v = &vCorrente, .line = 0, .column = 9},
+        {.v = &vTempo, .line = 1, .column = 2},
+        {.v = &vVelocidade, .line = 1, .column = 12},
+    },
+    .opts = NULL,
+};
+void telaFuncionamento(void)
+{
+    if (tela_atual != FUNCIONAMENTO)
+    {
+        lcd_SendCmd(0x01);
+        lcd_Write("T:TTGU i:sIIviuU");
+        lcd_SendCmd(0xC0);
+        lcd_Write("t:tPttU   V:VVVP");
+    }
+    for (uint8_t i = 0; i < 4; i++)
+    {
+        struct variavel *v = Funcionamento.vars[i].v;
+        if (v->changed != 0 || tela_atual != FUNCIONAMENTO)
+        {
+            uint8_t line = Funcionamento.vars[i].line;
+            uint8_t column = Funcionamento.vars[i].column;
+            if (line == 0)
+                line = 0x80;
+            else
+                line = 0xC0;
+            lcd_SendCmd(line + column);
+            lcd_Write(v->repr);
+            v->changed = 0;
+        }
+    }
+    tela_atual = FUNCIONAMENTO;
 }

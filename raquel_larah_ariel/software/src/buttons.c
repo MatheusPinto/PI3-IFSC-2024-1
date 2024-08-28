@@ -29,13 +29,17 @@ buttons_result buttons_read()
         break;
     case BUTTONS_NONE:
         mode = DEBOUNCING;
-        buttons_PCINTEnable();
+        if (timer == 0)
+            buttons_PCINTEnable();
         break;
     case BUTTONS_DOWN:
         if (timer != 0)
             return BUTTONS_NONE;
         if (BUTTONS_DW())
+        {
             status = BUTTONS_NONE;
+            timer = 80;
+        }
         else if (mode == DEBOUNCING)
         {
             timer = BUTTONS_HOLD_TIME_MS / FSM_BASE_TIME_MS;
@@ -50,7 +54,10 @@ buttons_result buttons_read()
         if (timer != 0)
             return BUTTONS_NONE;
         if (BUTTONS_UP())
+        {
             status = BUTTONS_NONE;
+            timer = 80;
+        }
         else if (mode == DEBOUNCING)
         {
             timer = BUTTONS_HOLD_TIME_MS / FSM_BASE_TIME_MS;
@@ -65,8 +72,8 @@ buttons_result buttons_read()
         if (timer != 0)
             return BUTTONS_NONE;
         status = BUTTONS_NONE;
-        if (!BUTTONS_OK())
-            return BUTTONS_OK;
+        timer = 80;
+        return BUTTONS_OK;
         break;
     }
     return status;

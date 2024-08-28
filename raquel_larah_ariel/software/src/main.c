@@ -171,7 +171,26 @@ int main(void)
     while (1)
     {
         buttons = buttons_read();
-        
+
+        result = termo_read(&temperatura);
+        switch (result)
+        {
+        case TERMO_BUSY:
+            break;
+        case TERMO_READY:
+            updateTemperatura(temperatura);
+            result = termo_conv();
+            break;
+        case TERMO_UNINIT:
+        case TERMO_ERROR_COM:
+        case TERMO_ERROR_CRC:
+        case TERMO_ERROR_PULL:
+            vars.target_temp = 0;
+            updateTargetTemp(vars.target_temp);
+            updateError(result);
+            break;
+        }
+
         states[main_state]();
 
         main_state_changed = 0;
@@ -447,7 +466,8 @@ static void main_state_ajuste_temperatura(void)
 static void main_state_ajuste_temperatura_inc(void)
 {
     vars.target_temp += VAR_TEMPERATURA_STEP;
-    if (vars.target_temp < VAR_TEMPERATURA_MIN) {
+    if (vars.target_temp < VAR_TEMPERATURA_MIN)
+    {
         vars.target_temp = VAR_TEMPERATURA_MIN;
     }
     updateTargetTemp(vars.target_temp);
@@ -461,38 +481,74 @@ static void main_state_ajuste_temperatura_dec(void)
     }
     updateTargetTemp(vars.target_temp);
 }
-static void main_state_ajuste_tempo(void) {
+static void main_state_ajuste_tempo(void)
+{
     telaEdicao(ED_TEMPO);
 }
-static void main_state_ajuste_tempo_inc(void) {
+static void main_state_ajuste_tempo_inc(void)
+{
     vars.tempo += VAR_TEMPO_STEP;
     updateTempo(vars.tempo);
 }
-static void main_state_ajuste_tempo_dec(void) {
+static void main_state_ajuste_tempo_dec(void)
+{
     vars.tempo -= VAR_TEMPO_STEP;
     updateTempo(vars.tempo);
 }
-static void main_state_ajuste_intervalo(void) {}
-static void main_state_ajuste_intervalo_inc(void) {}
-static void main_state_ajuste_intervalo_dec(void) {}
-static void main_state_ajuste_velocidade(void) {}
-static void main_state_ajuste_velocidade_inc(void) {}
-static void main_state_ajuste_velocidade_dec(void) {}
-static void main_state_aquecimento(void) {
+static void main_state_ajuste_intervalo(void)
+{
+    telaEdicao(ED_INT);
+}
+static void main_state_ajuste_intervalo_inc(void)
+{
+    vars.intervalo += VAR_INTERVALO_STEP;
+    updateIntervalo(vars.intervalo);
+}
+static void main_state_ajuste_intervalo_dec(void)
+{
+    vars.intervalo -= VAR_INTERVALO_STEP;
+    updateIntervalo(vars.intervalo);
+}
+static void main_state_ajuste_velocidade(void)
+{
+    // TODO: ligar o motor
+    telaEdicao(ED_VEL);
+}
+static void main_state_ajuste_velocidade_inc(void)
+{
+    vars.velocidade += VAR_VELOCIDADE_STEP;
+    updateVelocidade(vars.velocidade);
+}
+static void main_state_ajuste_velocidade_dec(void)
+{
+    vars.velocidade -= VAR_VELOCIDADE_STEP;
+    updateVelocidade(vars.velocidade);
+}
+static void main_state_aquecimento(void)
+{
     updateCorrente(valor_adc);
-    result = termo_read(&temperatura);
-    if (result == TERMO_READY) {
-        updateTemperatura(temperatura);
-        result = termo_conv();
-    } else if (result != TERMO_BUSY) {
-        updateError(result);
-    }
     telaAquecendo();
 }
-static void main_state_funcionamento_set_timer(void) {}
-static void main_state_funcionamento(void) {}
-static void main_state_funcionamento_dec_minuto(void) {}
-static void main_state_funcionamento_inverte(void) {}
+static void main_state_funcionamento_set_timer(void)
+{
+    main_timer = 60000;
+}
+static void main_state_funcionamento(void)
+{
+    updateCorrente(valor_adc);
+    telaFuncionamento();
+}
+static void main_state_funcionamento_dec_minuto(void)
+{
+    vars.tempo -= 1;
+    updateTempo(vars.tempo);
+    contador_intervalo += 1;
+}
+static void main_state_funcionamento_inverte(void)
+{
+    contador_intervalo = 0;
+    // TODO: inverte polaridade;
+}
 static void main_state_error(void) {}
 static void main_state_error_bt(void) {}
 static void main_state_error_termo(void) {}

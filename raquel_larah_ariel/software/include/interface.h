@@ -34,4 +34,6 @@ void telaEdicao(edicaoOpts opts);
 
 
 void telaAquecendo(void);
+
+void telaFuncionamento(void);
 #endif

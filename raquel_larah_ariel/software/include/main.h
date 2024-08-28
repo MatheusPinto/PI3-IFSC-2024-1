@@ -5,8 +5,8 @@
 #define FSM_BASE_TIME_MS 1UL
 
 /*******************************TEMPERATURA ***********************************/
-#define VAR_TEMPERATURA_DEFAULT 60
-#define VAR_TEMPERATURA_MIN 50
+#define VAR_TEMPERATURA_DEFAULT 20
+#define VAR_TEMPERATURA_MIN 20
 #define VAR_TEMPERATURA_MAX 99
 #define VAR_TEMPERATURA_STEP 1
 #define VAR_TEMPERATURA_STR_LENGTH 2
