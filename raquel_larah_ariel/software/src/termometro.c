@@ -1,142 +1,202 @@
 #include <stdint.h>
-#include <stdlib.h>
 #include <avr/interrupt.h>
+#include <util/delay.h>
 
 #include "termometro.h"
-#include "main.h"
-#include "ds18b20/ds18b20.h"
 
-/***********************************************/
-/* Definir em algum source file (ex.: main.c) */
-extern int16_t termo_temperatura;
-extern uint8_t termo_error;
-extern volatile uint16_t termo_timer;
-/***********************************************/
+#define TERMO_SKIP_ROM 0xCC
+#define TERMO_CONVERT 0x44
+#define TERMO_READ_SP 0xBE
 
-typedef enum
+#define OW_FORCE_HIGH()           \
+    do                            \
+    {                             \
+        TERMO_PORT |= TERMO_MASK; \
+        TERMO_DDR |= TERMO_MASK;  \
+    } while (0)
+
+#define OW_FORCE_LOW()             \
+    do                             \
+    {                              \
+        OW_FORCE_HIGH();           \
+        TERMO_PORT &= ~TERMO_MASK; \
+    } while (0)
+
+#define OW_RELEASE()               \
+    do                             \
+    {                              \
+        TERMO_PORT &= ~TERMO_MASK; \
+        TERMO_DDR &= ~TERMO_MASK;  \
+    } while (0)
+
+static uint8_t oneWire_reset();
+static uint8_t oneWire_read();
+static void oneWire_write(uint8_t);
+
+static termo_result status = TERMO_UNINIT;
+static volatile uint16_t timer;
+
+termo_result termo_conv()
 {
-    TERMO_STATE_START_CONV,
-    TERMO_STATE_READ,
-    TERMO_STATE_ERROR,
-    TERMO_STATE_LENGTH,
-} termo_stateType;
-static termo_stateType termo_curr_state = TERMO_STATE_START_CONV;
-static uint8_t termo_state_changed = 1;
-
-static uint8_t termo_state_StartConv();
-static uint8_t termo_state_Read();
-static uint8_t termo_state_Error();
-
-static FSM_applyType termo_state_Fns[TERMO_STATE_LENGTH] = {
-    termo_state_StartConv,
-    termo_state_Read,
-    termo_state_Error,
-};
-
-uint8_t termo_state_Apply()
-{
-    return termo_state_Fns[termo_curr_state]();
-}
-
-void termo_state_Next()
-{
-    if (*ev_flags & EV_TERMO_ERROR)
+    if (status == TERMO_UNINIT || status == TERMO_READY)
     {
-        termo_curr_state = TERMO_STATE_ERROR;
-        termo_state_changed = 1;
-        return;
-    }
-
-    if ((*ev_flags & EV_TERMO_TIMER) == 0)
-    {
-        return;
-    }
-
-    switch (termo_curr_state)
-    {
-    case TERMO_STATE_START_CONV:
-        termo_curr_state = TERMO_STATE_READ;
-        break;
-    case TERMO_STATE_READ:
-        termo_curr_state = TERMO_STATE_START_CONV;
-        break;
-    default:
-        termo_curr_state = TERMO_STATE_ERROR;
-        termo_error = TERMO_ERROR_INVALID_STATE;
-    }
-
-    termo_state_changed = 1;
-}
-
-static uint8_t termo_state_StartConv()
-{
-    /* Na entrada do estado inicia a conversão*/
-    if (termo_state_changed)
-    {
-        termo_state_changed = 0;
-        termo_error = ds18b20convert(&TERMO_PORT, &TERMO_DDR, &TERMO_PORTIN, TERMO_MASK, NULL);
-        /*
-        se ocorreu um erro emite o evento e informa que a logica de próximo estado deve ser
-        chamada imediatamente, em teoria esse evento já causaria a execução da logica de
-        proximo estado, mas assim fica mais evidente o que deve acontecer. Na logica de próximo
-        estado a maquina vai ser direcionada ao estado de erro
-        */
-        if (termo_error)
+        if (oneWire_reset())
+            status = TERMO_ERROR_COM;
+        else
         {
-            ev_write(EV_TERMO_ERROR);
-            return FSM_CONTINUE;
+            oneWire_write(TERMO_SKIP_ROM);
+            oneWire_write(TERMO_CONVERT);
+            status = TERMO_BUSY;
+            timer = 1000;
         }
-        /*
-        Se não ocorreram erros inicia um contador de 1 segundo
-        */
-        termo_timer = 1000 / FSM_BASE_TIME_MS;
     }
-    /*
-    esse estado possui apenas logica de entrada, após um segundo a logica de próximo estado
-    direciona a FSM para o estado de leitura do valor
-    */
-    return FSM_EV_WAIT;
+    return status;
 }
 
-static uint8_t termo_state_Read()
+uint8_t ds18b20crc8(uint8_t *data, uint8_t length)
 {
-    if (termo_state_changed)
+    // Generate 8bit CRC for given data (Maxim/Dallas)
+
+    uint8_t i = 0;
+    uint8_t j = 0;
+    uint8_t mix = 0;
+    uint8_t crc = 0;
+    uint8_t byte = 0;
+
+    for (i = 0; i < length; i++)
     {
-        termo_state_changed = 0;
-        termo_error = ds18b20read(&PORTB, &DDRB, &PINB, (1 << PINB0), NULL, &(termo_temperatura));
-        termo_temperatura /= 16;
-		ev_write(EV_TERMO_NEW);
-        /*
-        se ocorreu um erro emite o evento e informa que a logica de próximo estado deve ser
-        chamada imediatamente, em teoria esse evento já causaria a execução da logica de
-        proximo estado, mas assim fica mais evidente o que deve acontecer. Na logica de próximo
-        estado a maquina vai ser direcionada ao estado de erro
-        */
-        if (termo_error)
+        byte = data[i];
+
+        for (j = 0; j < 8; j++)
         {
-            ev_write(EV_TERMO_ERROR);
-            return FSM_CONTINUE;
+            mix = (crc ^ byte) & 0x01;
+            crc >>= 1;
+            if (mix)
+                crc ^= 0x8C;
+            byte >>= 1;
         }
-        /*
-        Se não ocorreram erros inicia um contador de 1 segundo
-        */
-        termo_timer = 1000 / FSM_BASE_TIME_MS;
     }
-    /*
-    esse estado possui apenas logica de entrada, após trinta segundos a logica de próximo estado
-    direciona a FSM para o estado de início de conversão
-    */
-    return FSM_EV_WAIT;
+    return crc;
 }
 
-static uint8_t termo_state_Error()
+termo_result termo_read(int16_t *temperatura)
 {
-    /*
-    emite o evento de erro e indica que a o loop principal deve continuar ocorrendo
-    independentemente dos eventos ocorridos, a ideia é "forçar" as outras máquinas
-    a tratarem o erro
-    */
-   termo_error = 9;
-    ev_write(EV_TERMO_ERROR);
-    return FSM_CONTINUE;
+    if (status == TERMO_BUSY && timer == 0)
+    {
+        if (oneWire_reset())
+            status = TERMO_ERROR_COM;
+        else
+        {
+            oneWire_write(TERMO_SKIP_ROM);
+            oneWire_write(TERMO_READ_SP);
+            uint8_t scratch[9];
+            uint8_t all = 0;
+            for (uint8_t i = 0; i < 9; i++)
+            {
+                scratch[i] = oneWire_read();
+                all |= scratch[i];
+            }
+            if (all == 0)
+            {
+                status = TERMO_ERROR_PULL;
+            }
+            else if (scratch[8] != ds18b20crc8(scratch, 8))
+            {
+                status = TERMO_ERROR_CRC;
+            }
+            else
+            {
+                *temperatura = scratch[1];
+                *temperatura <<= 8;
+                *temperatura |= scratch[0];
+                *temperatura >>= 4;
+                status = TERMO_READY;
+            }
+        }
+    }
+    return status;
+}
+
+void termo_update()
+{
+    if (status == TERMO_BUSY && timer > 0)
+    {
+        timer -= 1;
+    }
+}
+
+uint8_t oneWire_reset()
+{
+    uint8_t sreg = SREG; // Store status register
+    cli();
+    OW_FORCE_LOW();
+    _delay_us(600);
+    OW_RELEASE();
+    _delay_us(70);
+    uint8_t response = TERMO_PORTIN & TERMO_MASK;
+    while ((TERMO_PORTIN & TERMO_MASK) == 0)
+        ; // espera o barramento ficar livre
+    OW_FORCE_HIGH();
+    _delay_us(600);
+    SREG = sreg; // Restore status register
+    return response;
+}
+
+static void oneWire_write0()
+{
+    OW_FORCE_LOW();
+    _delay_us(80);
+    OW_FORCE_HIGH();
+    _delay_us(2);
+}
+
+static void oneWire_write1()
+{
+    OW_FORCE_LOW();
+    _delay_us(8);
+    OW_FORCE_HIGH();
+    _delay_us(80);
+}
+
+static void oneWire_write(uint8_t byte)
+{
+    uint8_t sreg = SREG;
+    cli();
+    for (uint8_t i = 0; i < 8; i++)
+    {
+        if ((byte & 1) == 0)
+        {
+            oneWire_write0();
+        }
+        else
+        {
+            oneWire_write1();
+        }
+        byte >>= 1;
+    }
+    SREG = sreg;
+}
+
+static uint8_t oneWire_read_bit()
+{
+    OW_FORCE_LOW();
+    _delay_us(2);
+    OW_RELEASE();
+    _delay_us(5);
+    uint8_t bit = TERMO_PORTIN & TERMO_MASK;
+    _delay_us(60);
+    return bit;
+}
+
+static uint8_t oneWire_read()
+{
+    uint8_t sreg = SREG;
+    cli();
+    uint8_t data = 0;
+
+    for (uint8_t i = 1; i != 0; i <<= 1)
+        data |= oneWire_read_bit() * i;
+
+    SREG = sreg;
+    return data;
 }

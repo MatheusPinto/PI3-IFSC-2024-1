@@ -28,19 +28,17 @@
 #define BUTTONS_HOLD_TIME_MS 1000
 #define BUTTONS_BURST_TIME_MS 500
 
-#include <avr/io.h>
-#include <avr/interrupt.h>
-#include <stdint.h>
+typedef enum
+{
+    BUTTONS_UNINIT,
+    BUTTONS_NONE,
+    BUTTONS_UP,
+    BUTTONS_DOWN,
+    BUTTONS_OK,
+} buttons_result;
 
-#include "main.h"
-#include "buttons.h"
-
-#define BUTTONS_OK() ((BUTTONS_OK_PINR & BUTTONS_OK_MASK))
-#define BUTTONS_DW() ((BUTTONS_DW_PINR & BUTTONS_DW_MASK))
-#define BUTTONS_UP() ((BUTTONS_UP_PINR & BUTTONS_UP_MASK))
-
-uint8_t buttons_state_Apply();
-void buttons_state_Next();
-void buttons_Init();
+buttons_result buttons_read();
+void buttons_init();
+void buttons_update();
 
 #endif

@@ -23,7 +23,7 @@ CFLAGS = \
 LDLIBS = 
 LDFLAGS = -mmcu=atmega328p
 
-OBJ = ds18b20.o onewire.o main.o termometro.o lcd.o buttons.o main_fsm.o interface.o variables.o
+OBJ = main.o termometro.o lcd.o buttons.o interface.o
 
 ifeq ($(LOG), 1)
 OBJ += usart.o 
@@ -32,7 +32,7 @@ else
 CFLAGS += -UDLOG
 endif
 
-vpath %.c ../src ../src/ds18b20
+vpath %.c ../src
 
 ELF := $(OUTNAME).elf
 HEX := $(OUTNAME).hex

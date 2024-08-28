@@ -1,203 +1,286 @@
 #include <stdio.h>
 #include "lcd.h"
-#include "variables.h"
 #include "main.h"
+#include "interface.h"
 
 #define DEGREE 0xDF
 
-static struct
+struct variavel
 {
-    enum
-    {
-        INICIANDO,
-        SELECAO,
-        EDICAO,
-        AQUECENDO,
-        FUNCIONAMENTO,
-        ERRO,
-    } tipo;
-    uint8_t opts;
-} tela;
+    uint8_t changed;
+    char *const repr;
+};
 
-static uint8_t move_para_sel(uint8_t sel)
+static struct variavel vTargetTemp = {.changed = 0, .repr = "00°C"};
+static struct variavel vTempo = {.changed = 0, .repr = "0:00h"};
+static struct variavel vIntervalo = {.changed = 0, .repr = "0min"};
+static struct variavel vVelocidade = {.changed = 0, .repr = "000%%"};
+static struct variavel vError = {.changed = 0, .repr = "Err:0x00"};
+static struct variavel vTemperatura = {.changed = 0, .repr = "01°C"};
+static struct variavel vCorrente = {.changed = 0, .repr = "-10,1mA"};
+
+void updateTargetTemp(VAR_TEMPERATURA_T val)
 {
-    switch (sel)
-    {
-    case 0:
-    case 4:
-        lcd_SendCmd(0xC0 + 15);
-        break;
-    case 1:
-        lcd_SendCmd(0x80 + 00);
-        break;
-    case 2:
-        lcd_SendCmd(0xC0 + 00);
-        break;
-    case 3:
-        lcd_SendCmd(0x80 + 15);
-        break;
-    default:
-        return 1;
-    }
-    return 0;
+    snprintf(vTargetTemp.repr, 5, "%02d%cC", val, DEGREE);
+    vTargetTemp.changed = 1;
 }
 
-uint8_t tela_selecao(uint8_t sel)
+void updateTempo(VAR_TEMPO_T val)
 {
-    if (tela.tipo != SELECAO)
-    {
-        lcd_SendCmd(0x01); // apaga tudo
-
-        lcd_SendCmd(0x80 + 1); // move para 0,1
-        lcd_SendChar('T');
-        lcd_SendChar(':');
-        lcd_Write(variables->str.temperatura);
-        lcd_SendChar(DEGREE);
-        lcd_SendChar('C');
-
-        lcd_SendCmd(0x80 + 9); // move para 0,9
-        lcd_SendChar('i');
-        lcd_SendChar(':');
-        lcd_Write(variables->str.intervalo);
-        lcd_SendChar('m');
-        lcd_SendChar('i');
-        lcd_SendChar('n');
-
-        lcd_SendCmd(0xC0 + 1); // move para 1,1
-        lcd_SendChar('t');
-        lcd_SendChar(':');
-        lcd_Write(variables->str.tempo);
-        lcd_SendChar('h');
-
-        lcd_SendCmd(0xC0 + 9); // move para 1,9
-        lcd_SendChar('V');
-        lcd_SendChar(':');
-        lcd_Write(variables->str.velocidade);
-        lcd_SendChar('%');
-    }
-    else if (tela.opts != sel)
-    {
-        if (move_para_sel(tela.opts))
-            return 1;
-        lcd_SendChar(' ');
-    }
-
-    if (move_para_sel(sel))
-        return 1;
-
-    if (sel < 3)
-        lcd_SendChar('>');
-    else
-        lcd_SendChar('<');
-
-    tela.tipo = SELECAO;
-    tela.opts = sel;
-    return 0;
+    snprintf(vTempo.repr, 6, "%d:%02dh", val / 60, val % 60);
+    vTempo.changed = 1;
 }
 
-uint8_t tela_edicao(uint8_t sel)
+void updateIntervalo(VAR_INTERVALO_T val)
 {
-    if (tela.tipo != EDICAO || tela.opts != sel)
+    snprintf(vIntervalo.repr, 5, "%dmin", val);
+    vIntervalo.changed = 1;
+}
+
+void updateVelocidade(VAR_VELOCIDADE_T val)
+{
+    snprintf(vVelocidade.repr, 6, "%03d%%", val);
+    vVelocidade.changed = 1;
+}
+
+void updateError(uint8_t val)
+{
+    snprintf(vError.repr, 9, "Err:%#04x", val);
+    vError.changed = 1;
+}
+
+void updateTemperatura(uint8_t val)
+{
+    snprintf(vTemperatura.repr, 5, "%02d%cC", val, DEGREE);
+    vTemperatura.changed = 1;
+}
+
+void updateCorrente(uint16_t val)
+{
+    int16_t map = (int16_t)((uint32_t)val * 2400 / 1023); // mapeia entre 0 e 2400
+    map -= 1200; // offset (mapeia entre -1200 e 1200);
+    uint8_t rest = map >=0 ? map%10 : (-map)%10;
+    snprintf(vCorrente.repr, 8, "%+03d,%dmA", map/100, rest);
+    vCorrente.changed = 1;
+}
+
+struct tela
+{
+    void *opts;
+    const struct
+    {
+        struct variavel *const v;
+        uint8_t line : 1;
+        uint8_t column : 4;
+    } vars[];
+};
+
+static enum {
+    INICIANDO,
+    SELECAO,
+    EDICAO,
+    AQUECENDO,
+    FUNCIONAMENTO,
+    ERRO,
+} tela_atual = INICIANDO;
+
+/******************************************TELA DE SELECAO */
+/*
+.|0123456789012345|
+0| T:00°C  i:0min |
+1| t:0:00h V:100%>|
+*/
+static selecaoOpts sOpts = SO_NEXT;
+const static struct tela Selecao = {
+    .vars = {
+        {.v = &vTargetTemp, .line = 0, .column = 3},
+        {.v = &vTempo, .line = 1, .column = 3},
+        {.v = &vIntervalo, .line = 0, .column = 11},
+        {.v = &vVelocidade, .line = 1, .column = 11},
+    },
+    .opts = (void *)&sOpts,
+};
+
+void telaSelecao(selecaoOpts sel)
+{
+    if (tela_atual != SELECAO)
     {
         lcd_SendCmd(0x01);
+        lcd_Write(" T:00"
+                  "\xDF"
+                  "C  i:0min ");
+        lcd_SendCmd(0xC0);
+        lcd_Write(" t:0:00h V:100% ");
+    }
+    if (sel != *(selecaoOpts *)Selecao.opts || tela_atual != SELECAO)
+    {
+        switch (*(selecaoOpts *)Selecao.opts)
+        {
+        case SO_NEXT:
+        case SO_VEL:
+            lcd_SendCmd(0xC0 + 15);
+            break;
+        case SO_TTEMP:
+            lcd_SendCmd(0x80 + 0);
+            break;
+        case SO_TEMPO:
+            lcd_SendCmd(0xC0 + 0);
+            break;
+        case SO_INT:
+            lcd_SendCmd(0x80 + 15);
+            break;
+        }
+        lcd_SendChar(' ');
+
+        char sign = '?';
         switch (sel)
         {
-        case 0:
-            // ................
-            // ...Temperatura..
-            // ......TT°C......
-            lcd_SendCmd(0x80 + 3);
-            lcd_Write("Temperatura");
-            lcd_SendCmd(0xC0 + 8);
-            lcd_SendChar(DEGREE);
-            lcd_SendChar('C');
+        case SO_NEXT:
+            sign = '>';
+            lcd_SendCmd(0xC0 + 15);
             break;
-        case 1:
-            // ................
-            // .....Tempo......
-            // .....H:MMh......
-            lcd_SendCmd(0x80 + 5);
-            lcd_Write("Tempo");
-            lcd_SendCmd(0xC0 + 9);
-            lcd_SendChar('h');
+        case SO_VEL:
+            sign = '<';
+            lcd_SendCmd(0xC0 + 15);
             break;
-        case 2:
-            // ................
-            // ...Intervalo....
-            // ......Mmin......
-            lcd_SendCmd(0x80 + 4);
-            lcd_Write("Intervalo");
-            lcd_SendCmd(0xC0 + 8);
-            lcd_SendChar('m');
-            lcd_SendChar('i');
-            lcd_SendChar('n');
+        case SO_TTEMP:
+            sign = '>';
+            lcd_SendCmd(0x80 + 0);
             break;
-        case 3:
-            // ................
-            // ...Velocidade...
-            // ......VVV%......
-            lcd_SendCmd(0x80 + 3);
-            lcd_Write("Velocidade");
-            lcd_SendCmd(0xC0 + 9);
-            lcd_SendChar('%');
+        case SO_TEMPO:
+            sign = '>';
+            lcd_SendCmd(0xC0 + 0);
             break;
-        default:
-            return 1;
+        case SO_INT:
+            sign = '<';
+            lcd_SendCmd(0x80 + 15);
+            break;
+        }
+        lcd_SendChar(sign);
+    }
+
+    for (uint8_t i = 0; i < 3; i++)
+    {
+        struct variavel *v = Selecao.vars[i].v;
+        if (v->changed != 0 || tela_atual != SELECAO)
+        {
+            uint8_t line = Selecao.vars[i].line;
+            uint8_t column = Selecao.vars[i].column;
+            if (line == 0)
+                line = 0x80;
+            else
+                line = 0xC0;
+            lcd_SendCmd(line + column);
+            lcd_Write(v->repr);
+            v->changed = 0;
         }
     }
 
-    switch (sel)
+    *(selecaoOpts *)Selecao.opts = sel;
+    tela_atual = SELECAO;
+}
+/****************************************************TELA DE EDICAO */
+static edicaoOpts eOpts = ED_TERR;
+const static struct tela Edicao = {
+    .vars = {
+        // .|0123456789012345|
+        // 0|   Temperatura  |
+        // 1|      50°C      |
+        {.v = &vTargetTemp, .line = 1, .column = 6},
+        // .|0123456789012345|
+        // 0|      Tempo     |
+        // 1|      1:22h     |
+        {.v = &vTempo, .line = 1, .column = 6},
+        // .|0123456789012345|
+        // 0|    Intervalo   |
+        // 1|      4min      |
+        {.v = &vIntervalo, .line = 1, .column = 6},
+        // .|0123456789012345|
+        // 0|   Velocidade   |
+        // 1|      100%      |
+        {.v = &vVelocidade, .line = 1, .column = 6},
+        // .|0123456789012345|
+        // 0|   Temperatura  |
+        // 1|    Err:0xFF    |
+        {.v = &vError, .line = 1, .column = 4},
+    },
+    .opts = (void *)&eOpts,
+};
+void telaEdicao(edicaoOpts opts)
+{
+    uint8_t line = Edicao.vars[opts].line == 0 ? 0x80 : 0xC0;
+    uint8_t column = Edicao.vars[opts].column;
+    struct variavel *v = Edicao.vars[opts].v;
+
+    if (tela_atual != EDICAO || opts != *(edicaoOpts *)Edicao.opts)
     {
-    case 0:
-        lcd_SendCmd(0xC0 + 6);
-        lcd_Write(variables->str.temperatura);
-        break;
-    case 1:
-        lcd_SendCmd(0xC0 + 5);
-        lcd_Write(variables->str.tempo);
-        break;
-    case 2:
-        lcd_SendCmd(0xC0 + 6);
-        lcd_Write(variables->str.intervalo);
-        break;
-    case 3:
-        lcd_SendCmd(0xC0 + 6);
-        lcd_Write(variables->str.velocidade);
-        break;
-    default:
-        return 1;
+        lcd_SendCmd(0x01);
+        switch (opts)
+        {
+        case ED_TTEMP:
+            lcd_Write("   Temperatura  ");
+            break;
+        case ED_TEMPO:
+            lcd_Write("      Tempo     ");
+            break;
+        case ED_INT:
+            lcd_Write("    Intervalo   ");
+            break;
+        case ED_VEL:
+            lcd_Write("   Velocidade   ");
+            break;
+        case ED_TERR:
+            lcd_Write("   Temperatura  ");
+            break;
+        }
+        lcd_SendCmd(line + column);
+        lcd_Write(v->repr);
+        v->changed = 0;
     }
-
-    tela.tipo = EDICAO;
-    tela.opts = sel;
-    return 0;
+    if (v->changed)
+    {
+        lcd_SendCmd(line + column);
+        lcd_Write(v->repr);
+        v->changed = 0;
+    }
+    tela_atual = EDICAO;
+    *(edicaoOpts *)Edicao.opts = opts;
 }
-
-void tela_aquecendo() {
-	char temp[5];
-	if (tela.tipo != AQUECENDO) {
-		lcd_SendCmd(0x01);
-		lcd_Write("Aquecendo");	
-		lcd_SendCmd(0xC0 + 5);
-		lcd_SendChar('/');
-		lcd_Write(variables->str.temperatura);
-		lcd_SendChar(DEGREE);
-		lcd_SendChar('C');
-	}
-	lcd_SendCmd(0xC0 + 0);
-	snprintf(temp,5,"%2d%cC", termo_temperatura, DEGREE);
-	lcd_Write(temp);
-	tela.tipo = AQUECENDO;
-}
-
-uint8_t tela_erro(const char *msg, uint8_t codigo) {
-	if (tela.opts != ERRO) {
-		lcd_SendCmd(0x01);
-		lcd_Write(msg);
-		lcd_SendCmd(0xC0);
-		char cd[5];
-		snprintf(cd, 5, "%#04x", codigo);
-		lcd_Write(cd);
-	} 
-	return 0;
+/********Aquecendo*/
+/*
+.|0123456789012345|
+0|     aguarde    |
+1|20°C/60°C 12,0mA|
+*/
+const static struct tela Aquecendo = {
+    .vars = {
+        {.v = &vTemperatura, .line = 1, .column = 0},
+        {.v = &vTargetTemp, .line = 1, .column = 5},
+        {.v = &vCorrente, .line = 1, .column = 10},
+    },
+    .opts = (void *)&eOpts,
+};
+void telaAquecendo(void)
+{
+    if (tela_atual != AQUECENDO)
+    {
+        lcd_SendCmd(0x01);
+        lcd_SendCmd(0x80 + 5);
+        lcd_Write("Aguarde");
+        lcd_SendCmd(0xC0 + 4);
+        lcd_SendChar('/');
+    }
+    for (uint8_t i = 0; i < 3; i++)
+    {
+        struct variavel *v = Aquecendo.vars[i].v;
+        if (v->changed || tela_atual != AQUECENDO)
+        {
+            uint8_t line = Aquecendo.vars[i].line ? 0xC0 : 0x80;
+            uint8_t column = Aquecendo.vars[i].column;
+            lcd_SendCmd(line + column);
+            lcd_Write(v->repr);
+            v->changed = 0;
+        }
+    }
+    tela_atual = AQUECENDO;
 }

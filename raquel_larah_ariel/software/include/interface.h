@@ -3,9 +3,35 @@
 
 #include <stdint.h>
 
-uint8_t tela_selecao(uint8_t sel);
-uint8_t tela_edicao(uint8_t sel);
-uint8_t tela_erro(const char *msg, uint8_t codigo);
-void tela_aquecendo();
+void updateTargetTemp(VAR_TEMPERATURA_T val);
+void updateTempo(VAR_TEMPO_T val);
+void updateIntervalo(VAR_INTERVALO_T val);
+void updateVelocidade(VAR_VELOCIDADE_T val);
+void updateError(uint8_t val);
+void updateTemperatura(uint8_t val);
+void updateCorrente(uint16_t val);
 
+/******************************************TELA DE SELECAO */
+typedef enum
+{
+    SO_NEXT,
+    SO_TTEMP,
+    SO_TEMPO,
+    SO_INT,
+    SO_VEL
+} selecaoOpts;
+void telaSelecao(selecaoOpts sel);
+/****************************************************TELA DE EDICAO */
+typedef enum
+{
+    ED_TTEMP = 0,
+    ED_TEMPO,
+    ED_INT,
+    ED_VEL,
+    ED_TERR
+} edicaoOpts;
+void telaEdicao(edicaoOpts opts);
+
+
+void telaAquecendo(void);
 #endif
