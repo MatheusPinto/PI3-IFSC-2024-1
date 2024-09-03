@@ -45,30 +45,22 @@ Exemplos de aplica
      
      ### Raspberry Pi 4 Model B
 ![Raspberry Pi 4 Model B](https://www.pi-shop.ch/media/catalog/product/cache/1/image/650x/040ec09b1e35df139433887a97daa66f/t/h/thumbnail_10__2.jpg )
- *   Monitor
-	 * Resolução: xxxXxxx
+
+ *   Monitor Dell de 27" - P2722H
+	 * Resolução: 1920 x 1080 a 60 Hz
 	 * Entrada de vídeo HDMI integrada
-	 * Disponibilidade, reduzir custo
+	 * Escolhido devido a disponibilidade, ja possuiamos o monitor. Para um produto final este precisaria ser revisado para reduzir o custo de projeto.
      * Custo aproximado: R$xxxxxxx
      
-     ### Monitor
-![Raspberry Pi 4 Model B](______)
-     
- *   Monitor
-	 * Resolução: xxxXxxx
-	 * Entrada de vídeo HDMI integrada
-	 * Disponibilidade
-     * Custo aproximado: R$xxxxxxx
-     
-     ### Monitor
-![Monitor](______)
+     ### Monitor Dell de 27" - P2722H
+<img src="images/Monitor.JPG" align="center" alt="Monitor">   
 
  *   Moldura de Madeira
 	 * Fixar e dar estrutura ao conjunto.
      * Custo aproximado: R$xxxxxxx
      
      ### Moldura de madeira
-![Moldura de madeira](______)
+<img src="images/Moldura.JPG" align="center" alt="Moldura">
 
  *   Vidro
 	 * Dimensão
