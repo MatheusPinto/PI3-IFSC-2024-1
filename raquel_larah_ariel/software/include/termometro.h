@@ -4,10 +4,10 @@
 #include <stdint.h>
 #include <avr/io.h>
 
-#define TERMO_PORT PORTB
-#define TERMO_DDR DDRB
-#define TERMO_PORTIN PINB
-#define TERMO_MASK (1 << PORTB0)
+#define TERMO_PORT PORTC
+#define TERMO_DDR DDRC
+#define TERMO_PORTIN PINC
+#define TERMO_MASK (1 << PORTC1)
 
 typedef enum
 {
@@ -22,5 +22,6 @@ typedef enum
 termo_result termo_conv();
 termo_result termo_read(int16_t *temperatura);
 void termo_update();
+
 
 #endif

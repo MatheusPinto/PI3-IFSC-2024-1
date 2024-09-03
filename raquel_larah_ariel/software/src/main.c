@@ -6,564 +6,486 @@
 #include "lcd.h"
 #include "buttons.h"
 #include "termometro.h"
-#include "interface.h"
 #include "main.h"
-
-struct
-{
-    VAR_TEMPERATURA_T target_temp;
-    VAR_TEMPO_T tempo;
-    VAR_INTERVALO_T intervalo;
-    VAR_VELOCIDADE_T velocidade;
-    VAR_MOTOR_T motor : 1;
-    VAR_ELETRODO_T eletrodo : 2;
-    VAR_AQUECE_T aquece : 1;
-} vars = {
-    .target_temp = VAR_TEMPERATURA_DEFAULT,
-    .tempo = VAR_TEMPO_DEFAULT,
-    .intervalo = VAR_INTERVALO_DEFAULT,
-    .velocidade = VAR_VELOCIDADE_DEFAULT,
-    .motor = VAR_MOTOR_DEFAULT,
-    .eletrodo = VAR_ELETRODO_DEFAULT,
-    .aquece = VAR_AQUECE_DEFAULT,
-};
+#include "adc.h"
+#include "eletrodos.h"
+#include "motor.h"
+#include "aquecimento.h"
+#include "timing.h"
 
 typedef enum
 {
-    MAIN_STATE_RESUMO,
-    MAIN_STATE_SEL_TEMPERATURA,
-    MAIN_STATE_SEL_TEMPO,
-    MAIN_STATE_SEL_INTERVALO,
-    MAIN_STATE_SEL_VELOCIDADE,
-    MAIN_STATE_AJUSTE_TEMPERATURA,
-    MAIN_STATE_AJUSTE_TEMPERATURA_INC,
-    MAIN_STATE_AJUSTE_TEMPERATURA_DEC,
-    MAIN_STATE_AJUSTE_TEMPO,
-    MAIN_STATE_AJUSTE_TEMPO_INC,
-    MAIN_STATE_AJUSTE_TEMPO_DEC,
-    MAIN_STATE_AJUSTE_INTERVALO,
-    MAIN_STATE_AJUSTE_INTERVALO_INC,
-    MAIN_STATE_AJUSTE_INTERVALO_DEC,
-    MAIN_STATE_AJUSTE_VELOCIDADE,
-    MAIN_STATE_AJUSTE_VELOCIDADE_INC,
-    MAIN_STATE_AJUSTE_VELOCIDADE_DEC,
-    MAIN_STATE_AQUECIMENTO,
-    MAIN_STATE_FUNCIONAMENTO_SET_TIMER,
-    MAIN_STATE_FUNCIONAMENTO,
-    MAIN_STATE_FUNCIONAMENTO_DEC_MINUTO,
-    MAIN_STATE_FUNCIONAMENTO_INVERTE,
-    MAIN_STATE_ERROR,
-    MAIN_STATE_ERROR_BT,
-    MAIN_STATE_ERROR_TERMO,
-    MAIN_STATE_LENGTH,
+	MS_INIT_OE,
+	MS_INIT,
+	MS_SELECT_OE,
+	MS_SELECT,
+	MS_EDIT_OE,
+	MS_EDIT,
+	MS_PREPARE_OE,
+	MS_PREPARE,
+	MS_RUN_OE,
+	MS_RUN,
+	MS_ERROR,
+	MAIN_STATE_LENGTH,
 } main_stateType;
 
-static main_stateType main_state = MAIN_STATE_RESUMO;
-static uint8_t main_state_changed = 1;
+static main_stateType main_state = MS_INIT_OE;
 
-static void main_state_resumo(void);
-static void main_state_sel_temperatura(void);
-static void main_state_sel_tempo(void);
-static void main_state_sel_intervalo(void);
-static void main_state_sel_velocidade(void);
-static void main_state_ajuste_temperatura(void);
-static void main_state_ajuste_temperatura_inc(void);
-static void main_state_ajuste_temperatura_dec(void);
-static void main_state_ajuste_tempo(void);
-static void main_state_ajuste_tempo_inc(void);
-static void main_state_ajuste_tempo_dec(void);
-static void main_state_ajuste_intervalo(void);
-static void main_state_ajuste_intervalo_inc(void);
-static void main_state_ajuste_intervalo_dec(void);
-static void main_state_ajuste_velocidade(void);
-static void main_state_ajuste_velocidade_inc(void);
-static void main_state_ajuste_velocidade_dec(void);
-static void main_state_aquecimento(void);
-static void main_state_funcionamento_set_timer(void);
-static void main_state_funcionamento(void);
-static void main_state_funcionamento_dec_minuto(void);
-static void main_state_funcionamento_inverte(void);
-static void main_state_error(void);
-static void main_state_error_bt(void);
-static void main_state_error_termo(void);
+static void ms_init_oe(void);
+static void ms_init(void);
+static void ms_select_oe(void);
+static void ms_select(void);
+static void ms_edit_oe(void);
+static void ms_edit(void);
+static void ms_prepare_oe(void);
+static void ms_prepare(void);
+static void ms_run_oe(void);
+static void ms_run(void);
+static void ms_error(void);
 
 static void (*const states[MAIN_STATE_LENGTH])(void) = {
-    main_state_resumo,
-    main_state_sel_temperatura,
-    main_state_sel_tempo,
-    main_state_sel_intervalo,
-    main_state_sel_velocidade,
-    main_state_ajuste_temperatura,
-    main_state_ajuste_temperatura_inc,
-    main_state_ajuste_temperatura_dec,
-    main_state_ajuste_tempo,
-    main_state_ajuste_tempo_inc,
-    main_state_ajuste_tempo_dec,
-    main_state_ajuste_intervalo,
-    main_state_ajuste_intervalo_inc,
-    main_state_ajuste_intervalo_dec,
-    main_state_ajuste_velocidade,
-    main_state_ajuste_velocidade_inc,
-    main_state_ajuste_velocidade_dec,
-    main_state_aquecimento,
-    main_state_funcionamento_set_timer,
-    main_state_funcionamento,
-    main_state_funcionamento_dec_minuto,
-    main_state_funcionamento_inverte,
-    main_state_error,
-    main_state_error_bt,
-    main_state_error_termo,
+	ms_init_oe,
+	ms_init,
+	ms_select_oe,
+	ms_select,
+	ms_edit_oe,
+	ms_edit,
+	ms_prepare_oe,
+	ms_prepare,
+	ms_run_oe,
+	ms_run,
+	ms_error,
 };
 
-volatile uint16_t valor_adc = VAR_CORRENTE_ADC_THRESHOLD; // TODO: fix this
+struct
+{
+	int16_t temperature;
+	int8_t thermo_result;
+	int8_t adc_max;
+
+	enum
+	{
+		NONE,
+		SYNC,
+		THERMO_COM,
+		THERMO_CRC,
+		THERMO_PULL,
+	} error;
+
+	enum
+	{
+		START,
+		TARGET_TEMP,
+		INTERVAL,
+		TOTAL_TIME,
+		VELOCITY,
+	} selected;
+
+} vars = {
+	.temperature = 0,
+	.thermo_result = 0,
+	.adc_max = 0,
+	.error = NONE,
+	.selected = START,
+};
+
 volatile uint16_t main_timer = 0;
-static uint8_t contador_intervalo = 0;
-static int16_t temperatura;
-static termo_result result;
-static uint8_t buttons;
 
 int main(void)
 {
-    /**** INICIALIZAÇÔES ****/
-    lcd_Init();
-    buttons_init();
-    //    Mode 4 - TCC - OCRA
-    TCCR1A = 0;
-    TCCR1B = (1 << CS10) | (1 << WGM12);
-    // 16Mhz/1/16000 = 1kHz -> 1ms
-    OCR1A = 16000;
-    TIMSK1 = (1 << OCIE1A);
+	/**** INICIALIZAÇÔES ****/
+	lcd_Init();
+	adcInit();
+	buttonsInit();
+	eletrodosInit();
+	motorInit();
+	aquecimentoInit();
+	timingInit();
 
-    ADMUX = (1 << REFS0);
-    ADCSRA = (1 << ADEN) | (1 << ADSC) | (1 << ADATE) | (1 << ADIE) |
-             (1 << ADPS2) | (1 << ADPS0) | (1 << ADPS1); // prescaler 128
-    DIDR0 = (1 << ADC0D);
+	// Mode 4 - TCC - OCRA
+	TCCR1A = 0;
+	TCCR1B = (1 << CS11) | (1 << WGM12);
+	// 16Mhz/8/20000 = 10ms
+	OCR1A = 20000;
+	TIMSK1 = (1 << OCIE1A);
 
-    // set_sleep_mode(SLEEP_MODE_IDLE);
+	set_sleep_mode(SLEEP_MODE_IDLE);
 
-    do
-    {
-        sei();
-        result = termo_read(&temperatura);
-        switch (result)
-        {
-        case TERMO_UNINIT:
-            result = termo_conv();
-            lcd_Write("iniciando");
-            break;
-        case TERMO_BUSY:
-        case TERMO_READY:
-            break;
-        case TERMO_ERROR_COM:
-        case TERMO_ERROR_CRC:
-        case TERMO_ERROR_PULL:
-            vars.target_temp = 0;
-            temperatura = 0;
-            break;
-        }
-    } while (result == TERMO_BUSY);
+	main_timer = 0;
+	TCNT1 = 0;
+	sei();
+	while (1)
+	{
+		cli();
+		if (main_timer > 1)
+		{
+			vars.error = SYNC;
+			main_state = MS_ERROR;
+		}
+		while (main_timer <= 1)
+		{
+			sei();
+			sleep_mode();
+		}
+		main_timer = 0;
 
-    updateTargetTemp(vars.target_temp);
-    updateTempo(vars.tempo);
-    updateIntervalo(vars.intervalo);
-    updateVelocidade(vars.velocidade);
-    updateError(result);
-    while (1)
-    {
-        buttons = buttons_read();
+		buttonsUpdate();
+		timingUpdate();
+		termo_update();
+		vars.thermo_result = termo_read(&vars.temperature);
+		switch (vars.thermo_result)
+		{
+		case TERMO_UNINIT:
+			termo_conv();
+		case TERMO_READY:
+			aquecimentoUpdate(vars.temperature);
+			break;
+		case TERMO_ERROR_COM:
+			vars.error = THERMO_COM;
+			main_state = MS_ERROR;
+			break;
+		case TERMO_ERROR_CRC:
+			vars.error = THERMO_CRC;
+			main_state = MS_ERROR;
+			break;
+		case TERMO_ERROR_PULL:
+			vars.error = THERMO_PULL;
+			main_state = MS_ERROR;
+			break;
+		}
 
-        result = termo_read(&temperatura);
-        switch (result)
-        {
-        case TERMO_BUSY:
-            break;
-        case TERMO_READY:
-            updateTemperatura(temperatura);
-            result = termo_conv();
-            break;
-        case TERMO_UNINIT:
-        case TERMO_ERROR_COM:
-        case TERMO_ERROR_CRC:
-        case TERMO_ERROR_PULL:
-            vars.target_temp = 0;
-            updateTargetTemp(vars.target_temp);
-            updateError(result);
-            break;
-        }
+		states[main_state]();
 
-        states[main_state]();
-
-        main_state_changed = 0;
-        switch (main_state)
-        {
-        case MAIN_STATE_RESUMO:
-            if (buttons == BUTTONS_DOWN)
-            {
-                main_state = MAIN_STATE_SEL_TEMPERATURA;
-                main_state_changed = 1;
-            }
-            else if (buttons == BUTTONS_UP)
-            {
-                main_state = MAIN_STATE_SEL_VELOCIDADE;
-                main_state_changed = 1;
-            }
-            else if (buttons == BUTTONS_OK)
-            {
-                main_state = MAIN_STATE_AQUECIMENTO;
-                main_state_changed = 1;
-            }
-            break;
-        case MAIN_STATE_SEL_TEMPERATURA:
-            if (buttons == BUTTONS_DOWN)
-            {
-                main_state = MAIN_STATE_SEL_TEMPO;
-                main_state_changed = 1;
-            }
-            else if (buttons == BUTTONS_UP)
-            {
-                main_state = MAIN_STATE_RESUMO;
-                main_state_changed = 1;
-            }
-            else if (buttons == BUTTONS_OK)
-            {
-                main_state = MAIN_STATE_AJUSTE_TEMPERATURA;
-                main_state_changed = 1;
-            }
-            break;
-        case MAIN_STATE_SEL_TEMPO:
-            if (buttons == BUTTONS_DOWN)
-            {
-                main_state = MAIN_STATE_SEL_INTERVALO;
-                main_state_changed = 1;
-            }
-            else if (buttons == BUTTONS_UP)
-            {
-                main_state = MAIN_STATE_SEL_TEMPERATURA;
-                main_state_changed = 1;
-            }
-            else if (buttons == BUTTONS_OK)
-            {
-                main_state = MAIN_STATE_AJUSTE_TEMPO;
-                main_state_changed = 1;
-            }
-            break;
-        case MAIN_STATE_SEL_INTERVALO:
-            if (buttons == BUTTONS_DOWN)
-            {
-                main_state = MAIN_STATE_SEL_VELOCIDADE;
-                main_state_changed = 1;
-            }
-            else if (buttons == BUTTONS_UP)
-            {
-                main_state = MAIN_STATE_SEL_TEMPO;
-                main_state_changed = 1;
-            }
-            else if (buttons == BUTTONS_OK)
-            {
-                main_state = MAIN_STATE_AJUSTE_INTERVALO;
-                main_state_changed = 1;
-            }
-            break;
-        case MAIN_STATE_SEL_VELOCIDADE:
-            if (buttons == BUTTONS_DOWN)
-            {
-                main_state = MAIN_STATE_RESUMO;
-                main_state_changed = 1;
-            }
-            else if (buttons == BUTTONS_UP)
-            {
-                main_state = MAIN_STATE_SEL_INTERVALO;
-                main_state_changed = 1;
-            }
-            else if (buttons == BUTTONS_OK)
-            {
-                main_state = MAIN_STATE_AJUSTE_VELOCIDADE;
-                main_state_changed = 1;
-            }
-            break;
-        case MAIN_STATE_AJUSTE_TEMPERATURA:
-            if (buttons == BUTTONS_DOWN && vars.target_temp > 0)
-            {
-                main_state = MAIN_STATE_AJUSTE_TEMPERATURA_DEC;
-                main_state_changed = 1;
-            }
-            else if (buttons == BUTTONS_UP &&
-                     result == TERMO_READY &&
-                     vars.target_temp <= VAR_TEMPERATURA_MAX - VAR_TEMPERATURA_STEP)
-            {
-                main_state = MAIN_STATE_AJUSTE_TEMPERATURA_INC;
-                main_state_changed = 1;
-            }
-            else if (buttons == BUTTONS_OK)
-            {
-                main_state = MAIN_STATE_SEL_TEMPERATURA;
-                main_state_changed = 1;
-            }
-            break;
-        case MAIN_STATE_AJUSTE_TEMPO:
-            if (buttons == BUTTONS_DOWN && vars.tempo >= VAR_TEMPO_MIN + VAR_TEMPO_STEP)
-            {
-                main_state = MAIN_STATE_AJUSTE_TEMPO_DEC;
-                main_state_changed = 1;
-            }
-            else if (buttons == BUTTONS_UP && vars.tempo <= VAR_TEMPO_MAX - VAR_TEMPO_STEP)
-            {
-                main_state = MAIN_STATE_AJUSTE_TEMPO_INC;
-                main_state_changed = 1;
-            }
-            else if (buttons == BUTTONS_OK)
-            {
-                main_state = MAIN_STATE_SEL_TEMPO;
-                main_state_changed = 1;
-            }
-            break;
-        case MAIN_STATE_AJUSTE_INTERVALO:
-            if (buttons == BUTTONS_DOWN && vars.intervalo >= VAR_INTERVALO_MIN + VAR_INTERVALO_STEP)
-            {
-                main_state = MAIN_STATE_AJUSTE_INTERVALO_DEC;
-                main_state_changed = 1;
-            }
-            else if (buttons == BUTTONS_UP && vars.intervalo <= VAR_INTERVALO_MAX - VAR_INTERVALO_STEP)
-            {
-                main_state = MAIN_STATE_AJUSTE_INTERVALO_INC;
-                main_state_changed = 1;
-            }
-            else if (buttons == BUTTONS_OK)
-            {
-                main_state = MAIN_STATE_SEL_INTERVALO;
-                main_state_changed = 1;
-            }
-            break;
-        case MAIN_STATE_AJUSTE_VELOCIDADE:
-            if (buttons == BUTTONS_DOWN && vars.velocidade >= VAR_VELOCIDADE_MIN + VAR_VELOCIDADE_STEP)
-            {
-                main_state = MAIN_STATE_AJUSTE_VELOCIDADE_DEC;
-                main_state_changed = 1;
-            }
-            else if (buttons == BUTTONS_UP && vars.velocidade <= VAR_VELOCIDADE_MAX - VAR_VELOCIDADE_STEP)
-            {
-                main_state = MAIN_STATE_AJUSTE_VELOCIDADE_INC;
-                main_state_changed = 1;
-            }
-            else if (buttons == BUTTONS_OK)
-            {
-                main_state = MAIN_STATE_SEL_VELOCIDADE;
-                main_state_changed = 1;
-            }
-            break;
-        case MAIN_STATE_AJUSTE_TEMPERATURA_INC:
-        case MAIN_STATE_AJUSTE_TEMPERATURA_DEC:
-            main_state = MAIN_STATE_AJUSTE_TEMPERATURA;
-            main_state_changed = 1;
-            break;
-        case MAIN_STATE_AJUSTE_TEMPO_INC:
-        case MAIN_STATE_AJUSTE_TEMPO_DEC:
-            main_state = MAIN_STATE_AJUSTE_TEMPO;
-            main_state_changed = 1;
-            break;
-        case MAIN_STATE_AJUSTE_INTERVALO_INC:
-        case MAIN_STATE_AJUSTE_INTERVALO_DEC:
-            main_state = MAIN_STATE_AJUSTE_INTERVALO;
-            main_state_changed = 1;
-            break;
-        case MAIN_STATE_AJUSTE_VELOCIDADE_INC:
-        case MAIN_STATE_AJUSTE_VELOCIDADE_DEC:
-            main_state = MAIN_STATE_AJUSTE_VELOCIDADE;
-            main_state_changed = 1;
-            break;
-        case MAIN_STATE_AQUECIMENTO:
-            if (buttons == BUTTONS_OK)
-            {
-                main_state = MAIN_STATE_RESUMO;
-                main_state_changed = 1;
-            }
-            else if (valor_adc > VAR_CORRENTE_ADC_THRESHOLD && temperatura >= vars.target_temp)
-            {
-                main_state = MAIN_STATE_FUNCIONAMENTO_SET_TIMER;
-                main_state_changed = 1;
-            }
-            break;
-        case MAIN_STATE_FUNCIONAMENTO_SET_TIMER:
-            main_state = MAIN_STATE_FUNCIONAMENTO;
-            main_state_changed = 1;
-            break;
-        case MAIN_STATE_FUNCIONAMENTO:
-            if (buttons == BUTTONS_OK)
-            {
-                main_state = MAIN_STATE_RESUMO;
-                main_state_changed = 1;
-            }
-            if (main_timer == 0)
-            {
-                main_state = MAIN_STATE_FUNCIONAMENTO_DEC_MINUTO;
-                main_state_changed = 1;
-            }
-            break;
-        case MAIN_STATE_FUNCIONAMENTO_DEC_MINUTO:
-            if (vars.tempo == 0)
-            {
-                main_state = MAIN_STATE_RESUMO;
-                main_state_changed = 1;
-            }
-            else if (contador_intervalo == vars.intervalo && vars.intervalo != 0)
-            {
-                main_state = MAIN_STATE_FUNCIONAMENTO_INVERTE;
-                main_state_changed = 1;
-            }
-            else
-            {
-                main_state = MAIN_STATE_FUNCIONAMENTO_SET_TIMER;
-                main_state_changed = 1;
-            }
-            break;
-        case MAIN_STATE_FUNCIONAMENTO_INVERTE:
-            main_state = MAIN_STATE_FUNCIONAMENTO_SET_TIMER;
-            main_state_changed = 1;
-            break;
-        case MAIN_STATE_ERROR:
-            break;
-        case MAIN_STATE_ERROR_BT:
-            break;
-        case MAIN_STATE_ERROR_TERMO:
-            break;
-        case MAIN_STATE_LENGTH:
-            break;
-        }
-    }
+		switch (main_state)
+		{
+		case MS_INIT_OE:
+			main_state = MS_INIT;
+			break;
+		case MS_INIT:
+			if (vars.thermo_result == TERMO_READY)
+				main_state = MS_SELECT_OE;
+			break;
+		case MS_SELECT_OE:
+			main_state = MS_SELECT;
+			break;
+		case MS_SELECT:
+			if (buttonsOk())
+			{
+				if (vars.selected == START)
+					main_state = MS_PREPARE_OE;
+				else
+					main_state = MS_EDIT_OE;
+			}
+			break;
+		case MS_EDIT_OE:
+			main_state = MS_EDIT;
+			break;
+		case MS_EDIT:
+			if (buttonsOk())
+				main_state = MS_SELECT_OE;
+			break;
+		case MS_PREPARE_OE:
+			main_state = MS_PREPARE;
+			break;
+		case MS_PREPARE:
+			if (buttonsOk())
+				main_state = MS_SELECT_OE;
+			if (aquecimentoStatusGet() == AQUECIMENTO_COOLING && vars.adc_max > 90)
+				main_state = MS_RUN_OE;
+			break;
+		case MS_RUN_OE:
+			main_state = MS_RUN;
+			break;
+		case MS_RUN:
+			if (buttonsOk())
+				main_state = MS_SELECT_OE;
+			break;
+		case MAIN_STATE_LENGTH:
+		case MS_ERROR:
+			break;
+		}
+	}
 }
 
-static void main_state_resumo(void)
+static void safeDefaults()
 {
-    telaSelecao(SO_NEXT);
+	aquecimentoDisable();
+	motorDisable();
+	eletrodosOff();
+	timingTotalEnable(0);
+	timingRefreshEnable(0);
+	timingIntervalEnable(0);
 }
-static void main_state_sel_temperatura(void)
+
+void ms_init_oe(void)
 {
-    telaSelecao(SO_TTEMP);
+	lcd_SendCmd(0x01);
+	lcd_Write("Iniciando");
 }
-static void main_state_sel_tempo(void)
+
+void ms_init(void)
 {
-    telaSelecao(SO_TEMPO);
+	safeDefaults();
 }
-static void main_state_sel_intervalo(void)
+
+uint8_t select(uint8_t sel, char *c)
 {
-    telaSelecao(SO_INT);
+	switch (sel)
+	{
+	case START:
+		*c = '>';
+		return 0xC0 + 15;
+	case TARGET_TEMP:
+		*c = '>';
+		return 0x80 + 0;
+	case INTERVAL:
+		*c = '<';
+		return 0x80 + 15;
+	case TOTAL_TIME:
+		*c = '>';
+		return 0xC0 + 0;
+	case VELOCITY:
+		*c = '<';
+		return 0xC0 + 15;
+	}
+	return 0x01;
 }
-static void main_state_sel_velocidade(void)
+
+void ms_select_oe(void)
 {
-    telaSelecao(SO_VEL);
+	safeDefaults();
+	char line[17];
+
+	lcd_SendCmd(0x01);
+	snprintf(line, 17, " T:%s%cC i:%sdmin ", aquecimentoTargetStr(), 0xDF, timingIntervalStr());
+	lcd_Write(line);
+
+	lcd_SendCmd(0xC0);
+	snprintf(line, 17, " t:%sh V:%s ", timingTotalStr(), motorStr());
+	lcd_Write(line);
+
+	char c;
+	uint8_t cmd = select(vars.selected, &c);
+	lcd_SendCmd(cmd);
+	lcd_SendChar(c);
 }
-static void main_state_ajuste_temperatura(void)
+
+void ms_select(void)
 {
-    if (result != TERMO_READY && result != TERMO_BUSY)
-    {
-        telaEdicao(ED_TERR);
-    }
-    else
-    {
-        telaEdicao(ED_TTEMP);
-    }
+	if (buttonsDown() == 0 && buttonsUp() == 0)
+		return;
+
+	char k;
+	uint8_t cmd = select(vars.selected, &k);
+	lcd_SendCmd(cmd);
+	lcd_SendChar(' ');
+
+	switch (vars.selected)
+	{
+	case START:
+		if (buttonsUp())
+			vars.selected = VELOCITY;
+		if (buttonsDown())
+			vars.selected = TARGET_TEMP;
+		break;
+	case TARGET_TEMP:
+		if (buttonsUp())
+			vars.selected = START;
+		if (buttonsDown())
+			vars.selected = INTERVAL;
+		break;
+	case INTERVAL:
+		if (buttonsUp())
+			vars.selected = TARGET_TEMP;
+		if (buttonsDown())
+			vars.selected = TOTAL_TIME;
+		break;
+	case TOTAL_TIME:
+		if (buttonsUp())
+			vars.selected = INTERVAL;
+		if (buttonsDown())
+			vars.selected = VELOCITY;
+		break;
+	case VELOCITY:
+		if (buttonsUp())
+			vars.selected = TOTAL_TIME;
+		if (buttonsDown())
+			vars.selected = START;
+		break;
+	}
+
+	cmd = select(vars.selected, &k);
+	lcd_SendCmd(cmd);
+	lcd_SendChar(k);
 }
-static void main_state_ajuste_temperatura_inc(void)
+
+void ms_edit_oe(void)
 {
-    vars.target_temp += VAR_TEMPERATURA_STEP;
-    if (vars.target_temp < VAR_TEMPERATURA_MIN)
-    {
-        vars.target_temp = VAR_TEMPERATURA_MIN;
-    }
-    updateTargetTemp(vars.target_temp);
+	safeDefaults();
+
+	lcd_SendCmd(0x01);
+
+	switch (vars.selected)
+	{
+	case START: // impossible state
+		break;
+	case TARGET_TEMP:
+		lcd_Write("Temperatura");
+		lcd_SendCmd(0xC0);
+		lcd_Write(aquecimentoTargetStr());
+		break;
+	case INTERVAL:
+		lcd_Write("Intervalo");
+		lcd_SendCmd(0xC0);
+		lcd_Write(timingIntervalStr());
+		break;
+	case TOTAL_TIME:
+		lcd_Write("Tempo Total");
+		lcd_SendCmd(0xC0);
+		lcd_Write(timingTotalStr());
+		break;
+	case VELOCITY:
+		lcd_Write("Velocidade");
+		lcd_SendCmd(0xC0);
+		lcd_Write(motorStr());
+		break;
+	}
 }
-static void main_state_ajuste_temperatura_dec(void)
+
+void ms_edit(void)
 {
-    vars.target_temp -= VAR_TEMPERATURA_STEP;
-    if (vars.target_temp < VAR_TEMPERATURA_MIN)
-    {
-        vars.target_temp = 0;
-    }
-    updateTargetTemp(vars.target_temp);
+	if (buttonsDown() == 0 && buttonsUp() == 0)
+		return;
+
+	lcd_SendCmd(0xC0);
+	switch (vars.selected)
+	{
+	case START: // impossible state
+		break;
+	case TARGET_TEMP:
+		if (buttonsUp())
+			aquecimentoTargetInc();
+		if (buttonsDown())
+			aquecimentoTargetDec();
+		lcd_Write(aquecimentoTargetStr());
+		break;
+	case INTERVAL:
+		if (buttonsUp())
+			timingIntervalInc();
+		if (buttonsDown())
+			timingIntervalDec();
+		lcd_Write(timingIntervalStr());
+		break;
+	case TOTAL_TIME:
+		if (buttonsUp())
+			timingTotalInc();
+		if (buttonsDown())
+			timingTotalDec();
+		lcd_Write(timingTotalStr());
+		break;
+	case VELOCITY:
+		motorEnable();
+		if (buttonsUp())
+			motorInc();
+		if (buttonsDown())
+			motorDec();
+		lcd_Write(motorStr());
+		break;
+	}
 }
-static void main_state_ajuste_tempo(void)
+
+void ms_prepare_oe(void)
 {
-    telaEdicao(ED_TEMPO);
+	safeDefaults();
+
+	lcd_SendCmd(0x01);
+	lcd_Write("Aguarde");
+	lcd_SendCmd(0xC0);
+	char line[17];
+	snprintf(line, 17, "%d%cC/%s %s", vars.temperature, 0xDF, aquecimentoTargetStr(), adcToString());
+	lcd_Write(line);
+
+	vars.adc_max = 0;
+
+	timingRefreshEnable(1);
 }
-static void main_state_ajuste_tempo_inc(void)
+
+void ms_prepare(void)
 {
-    vars.tempo += VAR_TEMPO_STEP;
-    updateTempo(vars.tempo);
+	aquecimentoEnable();
+
+	if (adcValue() > 9)
+	{
+		eletrodosOff();
+		vars.adc_max = adcValue();
+	}
+	else
+	{
+		eletrodosPos();
+	}
+
+	if (!timingRefreshDone())
+		return;
+
+	lcd_SendCmd(0xC0 + 0);
+	char str[5] = "..°C";
+	snprintf(str, 17, "%02d%cC/%s %s", vars.temperature, 0xDF, aquecimentoTargetStr(), adcToString());
+	lcd_Write(str);
 }
-static void main_state_ajuste_tempo_dec(void)
+
+void ms_run_oe(void)
 {
-    vars.tempo -= VAR_TEMPO_STEP;
-    updateTempo(vars.tempo);
+	char line[17];
+	lcd_SendCmd(0x01);
+	snprintf(line, 17, "T:%02d%cC i:%s", vars.temperature, 0xDF, adcToString());
+	lcd_Write(line);
+
+	lcd_SendCmd(0xC0);
+	snprintf(line, 17, "t:%s V:%s", timingTotalStr(), motorStr());
+	lcd_Write(line);
+	timingRefreshEnable(1);
 }
-static void main_state_ajuste_intervalo(void)
+void ms_run(void)
 {
-    telaEdicao(ED_INT);
+	aquecimentoEnable(1);
+	motorEnable();
+
+	if (!timingRefreshDone())
+		return;
+
+	char line[17];
+	lcd_SendCmd(0x01);
+	snprintf(line, 17, "T:%s i:%s", vars.temperature, 0xDF, adcToString());
+	lcd_Write(line);
+
+	lcd_SendCmd(0xC0);
+	snprintf(line, 17, "t:%s V:%s", timingTotalStr(), motorStr());
+	lcd_Write(line);
 }
-static void main_state_ajuste_intervalo_inc(void)
+void ms_error()
 {
-    vars.intervalo += VAR_INTERVALO_STEP;
-    updateIntervalo(vars.intervalo);
+	lcd_SendCmd(0x01);
+	switch (vars.error)
+	{
+	case NONE:
+		lcd_Write("NONE");
+		break;
+	case SYNC:
+		lcd_Write("SYNC");
+		break;
+	case THERMO_COM:
+		lcd_Write("THERMO_COM");
+		break;
+	case THERMO_CRC:
+		lcd_Write("THERMO_CRC");
+		break;
+	case THERMO_PULL:
+		lcd_Write("THERMO_PULL");
+		break;
+	}
 }
-static void main_state_ajuste_intervalo_dec(void)
-{
-    vars.intervalo -= VAR_INTERVALO_STEP;
-    updateIntervalo(vars.intervalo);
-}
-static void main_state_ajuste_velocidade(void)
-{
-    // TODO: ligar o motor
-    telaEdicao(ED_VEL);
-}
-static void main_state_ajuste_velocidade_inc(void)
-{
-    vars.velocidade += VAR_VELOCIDADE_STEP;
-    updateVelocidade(vars.velocidade);
-}
-static void main_state_ajuste_velocidade_dec(void)
-{
-    vars.velocidade -= VAR_VELOCIDADE_STEP;
-    updateVelocidade(vars.velocidade);
-}
-static void main_state_aquecimento(void)
-{
-    updateCorrente(valor_adc);
-    telaAquecendo();
-}
-static void main_state_funcionamento_set_timer(void)
-{
-    main_timer = 60000;
-}
-static void main_state_funcionamento(void)
-{
-    updateCorrente(valor_adc);
-    telaFuncionamento();
-}
-static void main_state_funcionamento_dec_minuto(void)
-{
-    vars.tempo -= 1;
-    updateTempo(vars.tempo);
-    contador_intervalo += 1;
-}
-static void main_state_funcionamento_inverte(void)
-{
-    contador_intervalo = 0;
-    // TODO: inverte polaridade;
-}
-static void main_state_error(void) {}
-static void main_state_error_bt(void) {}
-static void main_state_error_termo(void) {}
 
 ISR(TIMER1_COMPA_vect)
 {
-    termo_update();
-    buttons_update();
-    if (main_timer > 0)
-    {
-        main_timer -= 1;
-    }
-}
-
-ISR(ADC_vect)
-{
-    valor_adc = ADC;
+	main_timer += 1;
 }

@@ -3,6 +3,7 @@
 #include <util/delay.h>
 
 #include "termometro.h"
+#include "main.h"
 
 #define TERMO_SKIP_ROM 0xCC
 #define TERMO_CONVERT 0x44
@@ -47,7 +48,7 @@ termo_result termo_conv()
             oneWire_write(TERMO_SKIP_ROM);
             oneWire_write(TERMO_CONVERT);
             status = TERMO_BUSY;
-            timer = 1000;
+            timer = 1000 / FSM_BASE_TIME_MS;
         }
     }
     return status;

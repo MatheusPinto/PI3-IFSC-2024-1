@@ -23,7 +23,7 @@ CFLAGS = \
 LDLIBS = 
 LDFLAGS = -mmcu=atmega328p
 
-OBJ = main.o termometro.o lcd.o buttons.o interface.o
+OBJ = main.o adc.o aquecimento.o buttons.o eletrodos.o lcd.o motor.o termometro.o timing.o
 
 ifeq ($(LOG), 1)
 OBJ += usart.o 

@@ -1,162 +1,100 @@
 #include <stdint.h>
-#include <stdlib.h>
-#include <avr/interrupt.h>
-#include <ds18b20/ds18b20.h>
+#include <avr/io.h>
 
-#define PIN_AQUECE_PORT PORTB
-#define PIN_AQUECE_DDRR DDRB
-#define PIN_AQUECE_PINR PINB
-#define PIN_AQUECE_MASK (1 << PINB7)
-#define PIN_AQUECE_ON_HIGH 1
+#include "aquecimento.h"
 
-#define PIN_TERMO_PORT PORTB
-#define PIN_TERMO_DDR DDRB
-#define PIN_TERMO_PORTIN PINB
-#define PIN_TERMO_MASK (1 << PORTB0)
+static uint16_t aquecimentoTarget;
+static aquecimentoStatusType aquecimentoStatus;
 
-#define VAR_TEMPERATURA_DEFAULT 60
-#define VAR_TEMPERATURA_MIN 50
-#define VAR_TEMPERATURA_MAX 99
-#define VAR_TEMPERATURA_STEP 1
-
-static struct
+static void aquecimentoLiga(void)
 {
-    volatile uint16_t timer;
-    int8_t target_temp;
-    int8_t current_temp;
-    uint16_t timeout : 1;
-    uint8_t aquece : 1;
-    uint8_t status : 3;
-} vars;
+    AQUECIMENTO_PORT |= AQUECIMENTO_MASK;
+}
 
-void tick()
+static void aquecimentoDesliga(void)
 {
-    if (vars.timer > 0)
+    AQUECIMENTO_PORT &= ~AQUECIMENTO_MASK;
+}
+
+void aquecimentoInit()
+{
+    aquecimentoTarget = AQUECIMENTO_TARGET_TEMP_DEFAULT;
+    aquecimentoStatus = AQUECIMENTO_DISABLED;
+
+    AQUECIMENTO_PORT &= ~AQUECIMENTO_MASK;
+    AQUECIMENTO_DDRR |= AQUECIMENTO_MASK;
+
+    aquecimentoDesliga();
+}
+
+void aquecimentoEnable()
+{
+    aquecimentoStatus = AQUECIMENTO_HEATING;
+}
+
+void aquecimentoDisable()
+{
+    aquecimentoStatus = AQUECIMENTO_DISABLED;
+    aquecimentoDesliga();
+}
+
+void aquecimentoUpdate(uint16_t temperature)
+{
+    if (!aquecimentoStatus == AQUECIMENTO_DISABLED)
+        aquecimentoStatus = AQUECIMENTO_DISABLED;
+    else if (temperature < aquecimentoTarget)
+        aquecimentoStatus = AQUECIMENTO_HEATING;
+    else if (temperature > aquecimentoTarget + 5)
+        aquecimentoStatus = AQUECIMENTO_COOLING;
+
+    switch (aquecimentoStatus)
     {
-        vars.timer -= 1;
-        if (vars.timer == 0)
-        {
-            vars.timeout = 1;
-        }
+    case AQUECIMENTO_HEATING:
+        aquecimentoLiga();
+        break;
+    case AQUECIMENTO_COOLING:
+    case AQUECIMENTO_DISABLED:
+        aquecimentoDesliga();
+        break;
     }
 }
 
-void set_timeout(uint16_t ms)
+aquecimentoStatusType aquecimentoStatusGet()
 {
-    cli();
-    vars.timer = ms;
-    vars.timeout = 0;
-    sei();
+    return aquecimentoStatus;
 }
 
-static uint8_t timeout()
+void aquecimentoTargetSet(uint16_t temperature)
 {
-    if (vars.timeout)
-    {
-        vars.timeout = 0;
-        return 1;
-    }
-    return 0;
+    if (temperature < AQUECIMENTO_TARGET_TEMP_MIN)
+        temperature = 0;
+    else if (temperature > AQUECIMENTO_TARGET_TEMP_MAX)
+        temperature = AQUECIMENTO_TARGET_TEMP_MAX;
+    aquecimentoTarget = temperature;
 }
 
-void aquece_on()
+uint16_t aquecimentoTargetGet()
 {
-    vars.aquece = 1;
+    return aquecimentoTarget;
 }
 
-void aquece_off()
+void aquecimentoTargetInc()
 {
-#if PIN_AQUECE_ON_HIGH == 1
-    PIN_AQUECE_PORT &= ~PIN_AQUECE_MASK;
-#elif PIN_AQUECE_ON_HIGH == 0
-    PIN_AQUECE_PORT |= PIN_AQUECE_MASK;
-#else
-#error "O valor de PIN_AQUECE_ON_HIGH deve ser `1` ou `0`
-#endif
-    vars.aquece = 0;
-}
-
-/*******************************************************************************
- * Inicializa os pinos utilizados pelo módulo (pinos definidos em 
- * `aquecimento.h`). PIN_AQUECE é configurado como saída e inicializado como 
- * `desligado` à depender do valor de PIN_AQUECE_HIGH_ON. É iniciada uma 
- * conversão de temperatura e se não houverem erros o módulo se mantém em estado
- * UNINIT por 1 segundo **E** até que a função `temperatura_update` seja chamada
- ******************************************************************************/
-void temperatura_init()
-{
-    PIN_AQUECE_DDRR |= PIN_AQUECE_MASK;
-    aquece_off();
-
-    vars.target_temp = VAR_TEMPERATURA_DEFAULT;
-    vars.current_temp = 0;
-    vars.timeout = 0;
-
-    uint8_t st = ds18b20convert(&PIN_TERMO_PORT, &PIN_TERMO_DDR, &PIN_TERMO_PORTIN, PIN_TERMO_MASK, NULL);
-    vars.status = st ? st : 7; // erro ou uninit
-
-    set_timeout(1000);
-}
-
-
-uint8_t temperatura_update()
-{
-    if (timeout())
-    {
-        vars.status = ds18b20read(&PIN_TERMO_PORT, &PIN_TERMO_DDR, &PIN_TERMO_PORTIN, PIN_TERMO_MASK, NULL, &vars.current_temp);
-        set_timeout(1000);
-        vars.status = ds18b20convert(&PIN_TERMO_PORT, &PIN_TERMO_DDR, &PIN_TERMO_PORTIN, PIN_TERMO_MASK, NULL);
-        vars.status = 0; // Ok
-    }
-
-    if (vars.status == 7)
-        return; // esperando primeira conversão
-
-    if (vars.status != 0)
-    {
-        aquece_off();
-        vars.target_temp = 0;
-        return;
-    }
-
-    if (vars.aquece == 1 && vars.target_temp > vars.current_temp)
-    {
-#if PIN_AQUECE_ON_HIGH == 1
-        PIN_AQUECE_PORT |= PIN_AQUECE_MASK;
-#elif PIN_AQUECE_ON_HIGH == 0
-        PIN_AQUECE_PORT &= ~PIN_AQUECE_MASK;
-#else
-#error "O valor de PIN_AQUECE_ON_HIGH deve ser `1` ou `0`
-#endif
-    }
-}
-
-void temperatura_inc(void)
-{
-    uint8_t new_temp = vars.target_temp + VAR_TEMPERATURA_STEP;
-    if (new_temp < VAR_TEMPERATURA_MIN)
-    {
-        vars.target_temp = VAR_TEMPERATURA_MIN;
-    }
-    else if (new_temp > VAR_TEMPERATURA_MAX)
-    {
-        vars.target_temp = VAR_TEMPERATURA_MAX;
-    }
+    if (aquecimentoTarget == 0)
+        aquecimentoTargetSet(AQUECIMENTO_TARGET_TEMP_MIN);
     else
-    {
-        vars.target_temp = new_temp;
-    }
+        aquecimentoTargetSet(aquecimentoTarget + AQUECIMENTO_TARGET_TEMP_STEP);
 }
 
-void temperatura_dec(void)
+void aquecimentoTargetDec()
 {
-    uint8_t new_temp = vars.target_temp - VAR_TEMPERATURA_STEP;
-    if (new_temp < VAR_TEMPERATURA_MIN)
-    {
-        vars.target_temp = 0;
-    }
-    else
-    {
-        vars.target_temp = new_temp;
-    }
+    if (aquecimentoTarget >= AQUECIMENTO_TARGET_TEMP_MIN)
+        aquecimentoTargetSet(aquecimentoTarget - AQUECIMENTO_TARGET_TEMP_STEP);
+}
+
+const char *aquecimentoTargetStr()
+{
+    static char str[3] = "tt";
+    snprintf(str, 5, "%02d", aquecimentoTarget);
+    return str;
 }

@@ -1,156 +1,173 @@
 #include <avr/io.h>
-#include <avr/interrupt.h>
 #include <stdint.h>
 
-#include "main.h"
 #include "buttons.h"
+#include "main.h"
 
-#define BUTTONS_OK() ((BUTTONS_OK_PINR & BUTTONS_OK_MASK))
-#define BUTTONS_DW() ((BUTTONS_DW_PINR & BUTTONS_DW_MASK))
-#define BUTTONS_UP() ((BUTTONS_UP_PINR & BUTTONS_UP_MASK))
+#define PRESSED (1 << 0)
+#define HOLD (1 << 1)
+#define DOWN (1 << 0)
+#define UP (1 << 1)
+#define OK (1 << 2)
 
-static void buttons_PCINTEnable();
-static void buttons_PCINTDisable();
+#define HOLD_DOWN (1 << 0)
+#define HOLD_UP (1 << 1)
+#define HOLD_OK (1 << 2)
+#define PRESSED_DOWN (1 << 3)
+#define PRESSED_UP (1 << 4)
+#define PRESSED_OK (1 << 5)
+#define BURST_DOWN (1 << 6)
+#define BURST_UP (1 << 7)
+#define BURST_OK (0) // never burst
 
-static enum {
-    DEBOUNCING,
-    HOLD,
-} mode;
+uint8_t status;
 
-static volatile buttons_result status;
-static volatile uint16_t timer;
-
-buttons_result buttons_read()
+void buttonsInit()
 {
-    switch (status)
-    {
-    case BUTTONS_UNINIT:
-        buttons_PCINTDisable();
-        break;
-    case BUTTONS_NONE:
-        mode = DEBOUNCING;
-        if (timer == 0)
-            buttons_PCINTEnable();
-        break;
-    case BUTTONS_DOWN:
-        if (timer != 0)
-            return BUTTONS_NONE;
-        if (BUTTONS_DW())
-        {
-            status = BUTTONS_NONE;
-            timer = 80;
-        }
-        else if (mode == DEBOUNCING)
-        {
-            timer = BUTTONS_HOLD_TIME_MS / FSM_BASE_TIME_MS;
-            mode = HOLD;
-        }
-        else if (mode == HOLD)
-        {
-            timer = BUTTONS_BURST_TIME_MS / FSM_BASE_TIME_MS;
-        }
-        break;
-    case BUTTONS_UP:
-        if (timer != 0)
-            return BUTTONS_NONE;
-        if (BUTTONS_UP())
-        {
-            status = BUTTONS_NONE;
-            timer = 80;
-        }
-        else if (mode == DEBOUNCING)
-        {
-            timer = BUTTONS_HOLD_TIME_MS / FSM_BASE_TIME_MS;
-            mode = HOLD;
-        }
-        else if (mode == HOLD)
-        {
-            timer = BUTTONS_BURST_TIME_MS / FSM_BASE_TIME_MS;
-        }
-        break;
-    case BUTTONS_OK:
-        if (timer != 0)
-            return BUTTONS_NONE;
-        status = BUTTONS_NONE;
-        timer = 80;
-        return BUTTONS_OK;
-        break;
-    }
-    return status;
+	BUTTONS_OK_DDR &= ~BUTTONS_OK_MASK;
+	BUTTONS_OK_PORT |= BUTTONS_OK_MASK;
+
+	BUTTONS_DOWN_DDR &= ~BUTTONS_DOWN_MASK;
+	BUTTONS_DOWN_PORT |= BUTTONS_DOWN_MASK;
+
+	BUTTONS_UP_DDR &= ~BUTTONS_UP_MASK;
+	BUTTONS_UP_PORT |= BUTTONS_UP_MASK;
+
+	status = 0;
 }
 
-void buttons_init()
+void buttonsOkUpdate()
 {
-    BUTTONS_OK_DDR &= ~BUTTONS_OK_MASK;
-    BUTTONS_OK_PORT |= BUTTONS_OK_MASK;
+	static uint16_t count = 0;
+	if (BUTTONS_OK_PINR & BUTTONS_OK_MASK)
+	{
+		status &= ~(HOLD_OK | PRESSED_OK);
+		count = 80 / FSM_BASE_TIME_MS;
+		return;
+	}
 
-    BUTTONS_DW_DDR &= ~BUTTONS_DW_MASK;
-    BUTTONS_DW_PORT |= BUTTONS_DW_MASK;
+	if (count > 0)
+	{
+		status &= ~PRESSED_OK;
+		count -= 1;
+		return;
+	}
 
-    BUTTONS_UP_DDR &= ~BUTTONS_UP_MASK;
-    BUTTONS_UP_PORT |= BUTTONS_UP_MASK;
+	if ((status & HOLD_OK) == 0)
+	{
+		status |= HOLD_OK | PRESSED_OK;
+		count = BUTTONS_HOLD_TIME_MS / FSM_BASE_TIME_MS;
+		return;
+	}
 
-    PCICR |= (BUTTONS_UP_PCICR_MASK) | (BUTTONS_DW_PCICR_MASK) | (BUTTONS_OK_PCICR_MASK);
-
-    buttons_PCINTEnable();
-    status = BUTTONS_NONE;
+	if (status & BURST_OK)
+	{
+		status |= PRESSED_OK;
+		count = BUTTONS_BURST_TIME_MS / FSM_BASE_TIME_MS;
+	}
 }
 
-void buttons_update()
+void buttonsDownUpdate()
 {
-    if (timer > 0)
-    {
-        timer -= 1;
-    }
+	static uint16_t count = 0;
+	if (BUTTONS_DOWN_PINR & BUTTONS_DOWN_MASK)
+	{
+		status &= ~(HOLD_DOWN | PRESSED_DOWN);
+		count = 80 / FSM_BASE_TIME_MS;
+		return;
+	}
+
+	if (count > 0)
+	{
+		status &= ~PRESSED_DOWN;
+		count -= 1;
+		return;
+	}
+
+	if ((status & HOLD_DOWN) == 0)
+	{
+		status |= HOLD_DOWN | PRESSED_DOWN;
+		count = BUTTONS_HOLD_TIME_MS / FSM_BASE_TIME_MS;
+		return;
+	}
+
+	if (status & BURST_DOWN)
+	{
+		status |= PRESSED_DOWN;
+		count = BUTTONS_BURST_TIME_MS / FSM_BASE_TIME_MS;
+	}
 }
 
-static void buttons_PCINTEnable()
+void buttonsUpUpdate()
 {
-    BUTTONS_OK_PCMSK |= BUTTONS_OK_MASK;
-    BUTTONS_DW_PCMSK |= BUTTONS_DW_MASK;
-    BUTTONS_UP_PCMSK |= BUTTONS_UP_MASK;
+	static uint16_t count = 0;
+	if (BUTTONS_UP_PINR & BUTTONS_UP_MASK)
+	{
+		status &= ~(HOLD_UP | PRESSED_UP);
+		count = 80 / FSM_BASE_TIME_MS;
+		return;
+	}
+
+	if (count > 0)
+	{
+		status &= ~PRESSED_UP;
+		count -= 1;
+		return;
+	}
+
+	if ((status & HOLD_UP) == 0)
+	{
+		status |= HOLD_UP | PRESSED_UP;
+		count = BUTTONS_HOLD_TIME_MS / FSM_BASE_TIME_MS;
+		return;
+	}
+
+	if (status & BURST_UP)
+	{
+		status |= PRESSED_UP;
+		count = BUTTONS_BURST_TIME_MS / FSM_BASE_TIME_MS;
+	}
 }
 
-static void buttons_PCINTDisable()
+void buttonsUpdate()
 {
-    BUTTONS_OK_PCMSK &= BUTTONS_OK_MASK;
-    BUTTONS_DW_PCMSK &= BUTTONS_DW_MASK;
-    BUTTONS_UP_PCMSK &= BUTTONS_UP_MASK;
+	buttonsOkUpdate();
+	buttonsDownUpdate();
+	buttonsUpUpdate();
 }
 
-static void buttons_isr()
+uint8_t buttonsUp()
 {
-    if (!BUTTONS_OK())
-    {
-        buttons_PCINTDisable();
-        status = BUTTONS_OK;
-        timer = 80;
-    }
-    else if (!BUTTONS_DW())
-    {
-        buttons_PCINTDisable();
-        status = BUTTONS_DOWN;
-        timer = 80;
-    }
-    else if (!BUTTONS_UP())
-    {
-        buttons_PCINTDisable();
-        status = BUTTONS_UP;
-        timer = 80;
-    }
+	return status & PRESSED_UP;
+}
+uint8_t buttonsDown()
+{
+	return status & PRESSED_DOWN;
+}
+uint8_t buttonsOk()
+{
+	return status & PRESSED_OK;
 }
 
-ISR(PCINT0_vect)
+void buttonsDownBurst(uint8_t flag)
 {
-    buttons_isr();
+	if (flag)
+	{
+		status |= BURST_DOWN;
+	}
+	else
+	{
+		status &= ~BURST_DOWN;
+	}
 }
-
-ISR(PCINT1_vect)
+void buttonsUpBurst(uint8_t flag)
 {
-    buttons_isr();
-}
-
-ISR(PCINT2_vect)
-{
-    buttons_isr();
+	if (flag)
+	{
+		status |= BURST_UP;
+	}
+	else
+	{
+		status &= ~BURST_UP;
+	}
 }
