@@ -242,17 +242,17 @@ O Prototipo a ser apresentado foi organizado de forma a apresentar 3 telas com e
  1. Tela 1:  Nesta tela apresentamos um exemplo de integração entre os módulos de cumprimentos, calendário e previsão do tempo. Demonstrando interface proporcione acesso rápido a informações do dia a dia do usuário ao se preparar para sair.
 
 ### Tela 1
-![Tela 1](Tela_1.jpeg )
+<img src="images/Tela_1.jpeg" align="center" alt="Tela 1">
 
  2. Tela 2:  Nesta tela apresentamos um exemplo de integração entre os módulos de formula 1, rádio e noticias. Demonstrando uma aplicação mais  voltada a entretenimento.
 
 ### Tela 2
-![Tela 2](Tela_2.jpeg )
+<img src="images/Tela_2.jpeg" align="center" alt="Tela 2">
 
  3. Tela 3:  Nesta tela apresentamos um exemplo de integração entre os módulos de câmeras de segurança e informações do sistema. Demonstrando uma possibilidade de integração voltada a informações mais especificas/avançadas.
 
 ### Tela 3
-![Tela 3](Tela_3.jpeg )
+<img src="images/Tela_3.jpeg" align="center" alt="Tela 3">
 
 ## Desafios e Aprendizados
 
