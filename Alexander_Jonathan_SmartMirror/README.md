@@ -9,9 +9,17 @@ Campus Florianópolis<br></b>
 **Alunos:**  Alexsander Vieira e Jonathan Chrysostomo Cabral Bonette<br>
 </td></tr></table>
 
-* [Introdução](#introdução)
-* [Componentes utilizados](#componentes-utilizados)
-* [Desenvolvimento](#desenvolvimento)
+* [1. Introdução](#1-introdução)
+* [2. Requisitos](#2-requisitos)
+* [3. Lista de Componentes](#3-lista-de-componentes)
+* [4. Montagem do Hardware](#4-montagem-do-hardware)
+* [5. Configuração do Software](#5-configuração-do-software)
+* [6. Funcionalidades Implementadas](#6-funcionalidades-implementadas)
+* [7. Desafios e Aprendizados](#7-desafios-e-aprendizados)
+* [8. Próximos Passos e Melhorias Futuras](#8-próximos-passos-e-melhorias-futuras)
+* [9. Conclusão](#9-conclusão)
+* [10. Referências](#10-referências)
+
 
 ## 1. Introdução
 
@@ -26,7 +34,7 @@ Exemplos de aplica
 ~~Requisitos Não Funcionais: Inclua aspectos como desempenho, confiabilidade, usabilidade, e segurança.~~
 **Requisitos de Software e Hardware:** O sistema devera ser implementado utilizando como hardware um Raspberry Pi 4 Model B com Raspberry Pi OS, onde será desenvolvido a aplicação do smart mirror e a integração de módulos que tragam funcionalidades úteis ao dia a dia do usuário.
 
-## Lista de Componentes
+## 3. Lista de Componentes
 
 *   Raspberry Pi 4 Model B 
 	 * Conectividade Wi-Fi Integrada
@@ -91,7 +99,7 @@ Exemplos de aplica
      ### ~~Moldura touch screem~~
 ![Raspberry Pi 4 Model B](______)
 
-## Montagem do Hardware
+## 4. Montagem do Hardware
 
 Construção da Moldura: ~~Descreva o processo de construção da moldura de madeira, incluindo medições e montagem~~.
 
@@ -119,7 +127,7 @@ Conexões e Configurações Finais: ~~Descreva como o hardware foi conectado e m
 ### Montagem final
 ![Montagem final](Montagem_final.jpeg )
 
-## Configuração do Software
+## 5. Configuração do Software
 
 Instalação do Sistema Operacional: ~~Explicação passo a passo da instalação do sistema operacional no Raspberry Pi.~~
 
@@ -235,7 +243,7 @@ Etapas:
  ```C
 
  ```
-## Funcionalidades Implementadas
+## 6. Funcionalidades Implementadas
 
 O Prototipo a ser apresentado foi organizado de forma a apresentar 3 telas com exemplos de aplicação para o usuário.
 
@@ -254,18 +262,18 @@ O Prototipo a ser apresentado foi organizado de forma a apresentar 3 telas com e
 ### Tela 3
 <img src="images/Tela_3.jpeg" align="center" alt="Tela 3">
 
-## Desafios e Aprendizados
+## 7. Desafios e Aprendizados
 
 ~~Dificuldades Encontradas:~~
 
-## Próximos Passos e Melhorias Futuras
+## 8. Próximos Passos e Melhorias Futuras
 
 ~~Dificuldades Encontradas:~~
 
-## Conclusão
+## 9. Conclusão
 
 ~~Dificuldades Encontradas:~~
 
-## Referências
+## 10. Referências
 
 ~~Dificuldades Encontradas:~~
