@@ -92,11 +92,11 @@ Figura 1 - Diagrama do hardware
   <p>- Malha de potência no barramento (no bloco de alimentação) </p>
   <p align="justify">Os requisitos foram pensados para evitar ruídos indesejados, evitar que a placa sobreaqueça, melhor conexão dos perifericos e para que acaso haja algum problema no futuro seja fácil de encontrar o que está gerando.</p>
 
-### Fabrição 
+### Fabricação 
 
 <p align="justify">Para a montagem da placa, foi utilizado o laboratório de drones, onde possui a infraestrutura e os componentes. Após a montegem foi realizado os testes paralelamente. Primeiramente a montagem dos conversore, depois o circuitos de tensão, o circuito de corrente e por último os circuitos perifericos</p>
 <picture>
- <img alt="placa montada" src="img/placa.png">
+ <img alt="placa montada" src="img/plc.jpeg">
 </picture>
 
 ### Testes
@@ -104,8 +104,9 @@ Figura 1 - Diagrama do hardware
  <p>- Conetar a entrada da placa em uma bateria de 12s (+- 48V) </p>
  <p>- Conectar a saída da placa (XT60) em uma carga resistiva variavél</p>
  <p>- Aferir com um multimetro os pontos: corrente na carga,	tensão na bateria, tensão na saída do	ACS, tensão no iBAT e tensão no	VBUS</p>
- <p>- Aumentar a corrente (associando mais resistores) e reprdozir o procedimento</p>
-<p align="justify">Com isso foi possível preenher a tabela apresentada a seguir</p>
+ <p>- Aumentar a corrente (associando mais resistores) e reproduzir o procedimento</p>
+
+<p align="justify">Com isso foi possível preencher a tabela apresentada a seguir</p>
 
  <img alt="tabela dos resultados" src="img/comparacao.png">
 
