@@ -98,10 +98,10 @@ Exemplos de aplica
 Construção da Moldura: ~~Descreva o processo de construção da moldura de madeira, incluindo medições e montagem~~.
 
 ### Moldura lado frente
-![Moldura lado A](Moldura_v1_A.jpeg )
+<img src="images/Moldura_v1_A.jpeg.jpeg" align="center" width="50%" alt="Moldura">
 
 ### Moldura lado traseira
-![Moldura lado B](Moldura_v1_B.jpeg )
+<img src="images/Moldura_v1_B.jpeg" align="center" width="50%" alt="Moldura">
 
 Instalação do Monitor e Vidro: ~~Detalhe como o monitor e o vidro com película reflexiva foram instalados na moldura.~~
 
@@ -245,16 +245,22 @@ O Prototipo a ser apresentado foi organizado de forma a apresentar 3 telas com e
 
 ### Tela 1
 <img src="images/Tela_1.jpeg" align="center" alt="Tela 1">
+### Tela 1 - implementação
+<img src="images/Teala_1_implementada.jpeg" align="center" alt="Tela 1">
 
  2. Tela 2:  Nesta tela apresentamos um exemplo de integração entre os módulos de formula 1, rádio e noticias. Demonstrando uma aplicação mais  voltada a entretenimento.
 
 ### Tela 2
 <img src="images/Tela_2.jpeg" align="center" alt="Tela 2">
+### Tela 2 - implementação
+<img src="images/Teala_2_implementada.jpeg" align="center" alt="Tela 2">
 
  3. Tela 3:  Nesta tela apresentamos um exemplo de integração entre os módulos de câmeras de segurança e informações do sistema. Demonstrando uma possibilidade de integração voltada a informações mais especificas/avançadas.
 
 ### Tela 3
 <img src="images/Tela_3.jpeg" align="center" alt="Tela 3">
+### Tela 3 - implementação
+<img src="images/Teala_3_implementada.jpeg" align="center" alt="Tela 3">
 
 ## 7. Desafios e Aprendizados
 
@@ -263,6 +269,9 @@ O Prototipo a ser apresentado foi organizado de forma a apresentar 3 telas com e
 ## 8. Próximos Passos e Melhorias Futuras
 
 ~~Dificuldades Encontradas:~~
+
+### Tela 4 - implementação de outros prototipos
+<img src="images/Teala_4_implementada.jpeg" align="center" alt="Tela 4">
 
 ## 9. Conclusão
 
