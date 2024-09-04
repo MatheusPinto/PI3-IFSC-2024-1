@@ -40,7 +40,7 @@ Exemplos de aplica
 	 * Conectividade Wi-Fi Integrada
 	 * Saída de vídeo HDMI integrada
 	 * Capacidades de Comunicação IO - leitura de sensores
-     * OS ???
+     * Rapberry OS
      * Custo aproximado: R$250
      
      ### Raspberry Pi 4 Model B
@@ -57,39 +57,41 @@ Exemplos de aplica
 
  *   Moldura de Madeira
 	 * Fixar e dar estrutura ao conjunto.
+   * Dimensão
      * Custo aproximado: R$xxxxxxx
      
      ### Moldura de madeira
 <img src="images/Moldura.JPG" align="center" alt="Moldura">
 
  *   Vidro
-	 * Dimensão
+	 * Dimensão 
 	 * Espessura
      * Custo aproximado: R$xxxxxxx
      
      ### Vidro
-![Vidro](______)
+<img src="images/Vidro.JPG" align="center" alt="Vidro">
 
- *   Película espelhada
-	 * xxxxxxxx
-     * Custo aproximado: R$xxxxxxx
+ *   Película Reflectiva, Proteção de Privacidade, Vidro Adesivos, 50x100cm
+	 * Criar efeito espelhado quando a tela não estiver ligada.s
+     * Custo aproximado: R$ 16,91
      
      ### Película espelhada
-![Monitor](______)
+<img src="images/pelicula.JPG" align="center" alt="Pelicula">
+
  *   Sensor de gestos
-	 * Modelo: xxxXxxx
-	 * Capacidade de interagir com sistema
-     * Custo aproximado: R$xxxxxxx
+	 * Modelo: GY-PAJ2620
+	 * Capacidade de interagir com sistema utiizando gestos padronizados
+     * Custo aproximado: R$ 27,82
      
      ### Sensor de gestos
-![Sensor de gestos](______)
+<img src="images/sensor.JPG" align="center" alt="Sensor de gestos">
 
  *   ~~Moldura touch screem~~
 	 * ~~Facilidade de interagir com sistema~~
-     * ~~Custo aproximado:~~ R$xxxxxxx
+     * ~~Custo aproximado:~~ R$ 500,00, descartado neste momento devido ao custo ele
      
      ### ~~Moldura touch screem~~
-![Raspberry Pi 4 Model B](______)
+<img src="images/Touch.JPG" align="center" alt="Moldura touch screem">
 
 ## 4. Montagem do Hardware
 
