@@ -331,7 +331,7 @@ O código completo embarcado no ESP32 pode ser visualizado em [Código ESP32](./
 
 Em termos de hardware, foi desenvolvida uma PCB protótipo para o projeto, que integra diversos componentes essenciais. Esta placa conecta o ESP32 a três LEDs (vermelho, amarelo e verde) para indicar o status do dispositivo, além de um botão que inicia o processo de medição. A alimentação é fornecida por duas baterias de íon-lítio (Li-ion) conectadas em série, garantindo uma operação estável. A PCB também inclui uma placa de gerenciamento de bateria (BMS) para garantir o uso seguro e o carregamento adequado das baterias. Por fim, uma chave liga/desliga foi adicionada para facilitar o controle de energia do dispositivo.
 
-![PCB](./Imagens/PCB.png)
+![PCB](./Imagens/PCB.jpg)
 
 ## Modo de uso 
 
@@ -365,21 +365,27 @@ Em termos de hardware, foi desenvolvida uma PCB protótipo para o projeto, que i
 Os testes finais foram realizados para assegurar a funcionalidade e a precisão do dispositivo nas medições. Para isso, foi desenhado um esboço real do local a ser avaliado, e todos os pontos de medição foram percorridos conforme definido pela aplicação. Os resultados obtidos, incluindo a intensidade do sinal para cada ponto de acesso identificado, os valores máximos de RSSI e a latência da rede, são apresentados a seguir:
 
  **Mapa de calor AP1**
+ 
  ![Mapa de calor AP1](./Imagens/Teste_ap1.png)
 
  **Mapa de calor AP2**
+ 
  ![Mapa de calor AP2](./Imagens/Teste_ap2.png)
 
  **Mapa de calor AP3**
+ 
  ![Mapa de calor AP3](./Imagens/Teste_ap3.png)
 
  **Mapa de calor AP4**
+ 
  ![Mapa de calor AP4](./Imagens/Teste_ap4.png)
 
  **Mapa de calor da Latência**
+ 
  ![Mapa de calor Latência](./Imagens/Teste_latencia.png)
 
  **Mapa de calor Máximo RSSI**
+ 
  ![Mapa de calor Máximos](./Imagens/Teste_maximos.png)
 	
 ## Conclusão
