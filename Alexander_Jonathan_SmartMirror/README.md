@@ -244,23 +244,26 @@ O Prototipo a ser apresentado foi organizado de forma a apresentar 3 telas com e
  1. Tela 1:  Nesta tela apresentamos um exemplo de integração entre os módulos de cumprimentos, calendário e previsão do tempo. Demonstrando interface proporcione acesso rápido a informações do dia a dia do usuário ao se preparar para sair.
 
 ### Tela 1
-<img src="images/Tela_1.jpeg" align="center" alt="Tela 1">
+<img src="images/Tela_1.jpeg" align="center" width="90%" alt="Tela 1">
+
 ### Tela 1 - implementação
-<img src="images/Teala_1_implementada.jpeg" align="center" alt="Tela 1">
+<img src="images/Teala_1_implementada.jpeg" align="center" width="90%" alt="Tela 1">
 
  2. Tela 2:  Nesta tela apresentamos um exemplo de integração entre os módulos de formula 1, rádio e noticias. Demonstrando uma aplicação mais  voltada a entretenimento.
 
 ### Tela 2
-<img src="images/Tela_2.jpeg" align="center" alt="Tela 2">
+<img src="images/Tela_2.jpeg" align="center" width="90%" alt="Tela 2">
+
 ### Tela 2 - implementação
-<img src="images/Teala_2_implementada.jpeg" align="center" alt="Tela 2">
+<img src="images/Teala_2_implementada.jpeg" align="center" width="90%" alt="Tela 2">
 
  3. Tela 3:  Nesta tela apresentamos um exemplo de integração entre os módulos de câmeras de segurança e informações do sistema. Demonstrando uma possibilidade de integração voltada a informações mais especificas/avançadas.
 
 ### Tela 3
-<img src="images/Tela_3.jpeg" align="center" alt="Tela 3">
+<img src="images/Tela_3.jpeg" align="center" width="90%" alt="Tela 3">
+
 ### Tela 3 - implementação
-<img src="images/Teala_3_implementada.jpeg" align="center" alt="Tela 3">
+<img src="images/Teala_3_implementada.jpeg" align="center" width="90%" alt="Tela 3">
 
 ## 7. Desafios e Aprendizados
 
@@ -271,7 +274,7 @@ O Prototipo a ser apresentado foi organizado de forma a apresentar 3 telas com e
 ~~Dificuldades Encontradas:~~
 
 ### Tela 4 - implementação de outros prototipos
-<img src="images/Teala_4_implementada.jpeg" align="center" alt="Tela 4">
+<img src="images/Teala_4_implementada.jpeg" align="center" width="90%" alt="Tela 4">
 
 ## 9. Conclusão
 
