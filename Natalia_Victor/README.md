@@ -256,7 +256,7 @@ Além disso, a implementação no ESP32 desempenha um papel crucial no projeto. 
 
 Em `interface.py` o código define a classe `MainApp`, que é responsável por gerenciar a interface principal do aplicativo. Essa interface oferece três funcionalidades principais, acessíveis por meio de botões: `Editar Esboço`, `Conectar ao ESP`, e `Mapa de Calor`. Cada funcionalidade abre uma nova janela específica para a execução de tarefas distintas.
 
-![Tela_inicial](/Imagens/tela_inicial.png)
+![Tela_inicial](./Imagens/tela_inicial.png)
 
 O código completo pode ser visualizado a seguir:  [Interface.py](./Interface.py)
 
@@ -271,7 +271,7 @@ O usuário pode ajustar a distância entre os pontos de medição e a distância
 O esboço pode ser salvo para futuras edições, carregado caso já tenha sido previamente salvo, ou descartado para a criação de um novo. Funções de desfazer e refazer permitem maior controle durante o processo de edição. Por padrão, a opção `Grudar ao Grid` é ativada, facilitando a criação do polígono das paredes externas, que se completa quando o usuário clica novamente no ponto inicial.
 Por fim, o usuário pode sair da tela de edição do esboço, e, enquanto o menu principal da aplicação permanecer aberto, os dados do esboço continuarão armazenados, permitindo edições futuras conforme necessário.
 
-![Editor de Esboço](/Imagens/Editor_Esboco.png)
+![Editor de Esboço](./Imagens/Editor_Esboco.png)
 
 ### Conexão com ESP32
 
@@ -285,7 +285,7 @@ Após a confirmação ser recebida, o socket é fechado, e um servidor Flask é 
 
 O servidor Flask que recebe os dados de medição do ESP32. Esses dados, que incluem informações sobre o SSID, BSSIDs, canais e RSSIs, além de latências medidas em cada ponto, são armazenados em uma estrutura de dados organizada pela classe na função `receive_data`.
 
-![Conectar ao ESP](/Imagens/Conectar_ESP.png)
+![Conectar ao ESP](./Imagens/Conectar_ESP.png)
 
 Em [server.py](./server.py) pode ser visualizado o código completo implementado.
 
@@ -299,7 +299,7 @@ A visualização é gerada usando a biblioteca Matplotlib, que cria o mapa de ca
 
 Com essas informações, o usuário pode avaliar melhor a cobertura dos APs instalados e identificar áreas com deficiência de sinal ou interferências, como paredes e outros obstáculos que podem afetar a qualidade do sinal. Isso facilita a criação de estratégias para otimizar o posicionamento dos APs e melhorar a cobertura da rede Wi-Fi na residência.
 
-![Mapa de calor](/Imagens/Mapa_de_Calor.png)
+![Mapa de calor](./Imagens/Mapa_de_Calor.png)
 
 O código completo para geração do mapa de calor está disponível em: [heatmap.py](./heatmap.py)
 
@@ -331,7 +331,7 @@ O código completo embarcado no ESP32 pode ser visualizado em [Código ESP32](./
 
 Em termos de hardware, foi desenvolvida uma PCB protótipo para o projeto, que integra diversos componentes essenciais. Esta placa conecta o ESP32 a três LEDs (vermelho, amarelo e verde) para indicar o status do dispositivo, além de um botão que inicia o processo de medição. A alimentação é fornecida por duas baterias de íon-lítio (Li-ion) conectadas em série, garantindo uma operação estável. A PCB também inclui uma placa de gerenciamento de bateria (BMS) para garantir o uso seguro e o carregamento adequado das baterias. Por fim, uma chave liga/desliga foi adicionada para facilitar o controle de energia do dispositivo.
 
-![PCB](/Imagens/PCB.png)
+![PCB](./Imagens/PCB.png)
 
 ## Modo de uso 
 
@@ -365,22 +365,22 @@ Em termos de hardware, foi desenvolvida uma PCB protótipo para o projeto, que i
 Os testes finais foram realizados para assegurar a funcionalidade e a precisão do dispositivo nas medições. Para isso, foi desenhado um esboço real do local a ser avaliado, e todos os pontos de medição foram percorridos conforme definido pela aplicação. Os resultados obtidos, incluindo a intensidade do sinal para cada ponto de acesso identificado, os valores máximos de RSSI e a latência da rede, são apresentados a seguir:
 
  **Mapa de calor AP1**
- ![Mapa de calor AP1](/Imagens/Testes_ap1.png)
+ ![Mapa de calor AP1](./Imagens/Testes_ap1.png)
 
  **Mapa de calor AP2**
- ![Mapa de calor AP2](/Imagens/Testes_ap2.png)
+ ![Mapa de calor AP2](./Imagens/Testes_ap2.png)
 
  **Mapa de calor AP3**
- ![Mapa de calor AP3](/Imagens/Testes_ap3.png)
+ ![Mapa de calor AP3](./Imagens/Testes_ap3.png)
 
  **Mapa de calor AP4**
- ![Mapa de calor AP4](/Imagens/Testes_ap4.png)
+ ![Mapa de calor AP4](./Imagens/Testes_ap4.png)
 
  **Mapa de calor da Latência**
- ![Mapa de calor Latência](/Imagens/Testes_latencia.png)
+ ![Mapa de calor Latência](./Imagens/Testes_latencia.png)
 
  **Mapa de calor Máximo RSSI**
- ![Mapa de calor Máximos](/Imagens/Testes_maximos.png)
+ ![Mapa de calor Máximos](./Imagens/Testes_maximos.png)
 	
 ## Conclusão
 
