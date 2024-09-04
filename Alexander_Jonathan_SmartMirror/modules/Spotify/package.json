@@ -1,0 +1,35 @@
+{
+  "name": "spotify",
+  "version": "2.2.3",
+  "description": "Spotify display and controller for Project",
+  "main": "Spotify.js",
+  "keywords": [
+    "magicmirror",
+    "magic mirror",
+    "module",
+    "spotify",
+    "music"
+  ],
+  "author": {
+    "name": "skuethe"
+  },
+  "contributors": [
+    "humbertovirtudes",
+    "eouia",
+    "Ejay-3D",
+    "bugsounet"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/skuethe/Spotify/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/skuethe/Spotify"
+  },
+  "homepage": "https://github.com/skuethe/Spotify",
+  "dependencies": {
+    "open": "^6.4.0",
+    "axios": "^1.6.0"
+  }
+}
