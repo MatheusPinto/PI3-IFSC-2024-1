@@ -82,11 +82,35 @@ Figura 1 - Diagrama do hardware
 <p> - Conexões: São as conexões que a placa possui com o meio esterno, primeramente o 4 conectores XT60 que são usados para a conectar a carga (para testes inicias uma carga resistiva), 3 conectores JST-XH de duas vias, um para a alimentação da bomba que auxilia no resfriamento o motor, outro para aferir a temperatura e por último para a ignição do motor, 6 conectores JST-XH de 3 vias sendo, para o esc que vai acionar o BLDC para dar a partida no motor a combustão, para o servo motor que auxilia no controle, um que recebe um pulso da controladora de voo para o acionamento remoto do motor, e dois reservas caso venha a precisar no futuro, alem desses conectores temos nesse bloco um optacoplador para proteção do circuito com o sinal que vem do tacomêtro, um jumper para a alimentação do F280025C caso precise debugar o circuito no computador, um modulo para leitura do cartão SD e dois leds para informações. Para a comunicação com a controladora de voo foi prevista duas conexões, uma por JST-XH  e uma por JST-GH, para conseguir utilizar os dois tipos de controlaora disponiveis no laboratório (cube orange e pixhalk)</p>
 <p> - Condicionamento do Sinal: Contendo dois sinais que precisam ser ajustados para a leitura no F280025C a tensão que passa por um divisor resistivo para diminuir a tensão, um buffer e um filtro Sallen-Key e a corrente que após passar por um sensor de efeito hall (ACS758) passa por um buffer, um circuito somador para amplificar a tensão fornecida pelo sensor e um filtro sallen-key, o detalhemento desses dois circuitos está fornecido na folha de calculos.</p>
 <p></p>
+
 ### Layout
+
 <p>O layout seguiu os seguintes requisitos:</p>
   <p>- Deixar todos os componentes na parte superior da placa assim como os pontos de medição de tensão</p>
   <p>- A parte de potência separada e com menor interatividade com o resto da placa</p>
   <p>- Conectores na borda da placa </p>
   <p>- Malha de potência no barramento (no bloco de alimentação) </p>
   <p align="justify">Os requisitos foram pensados para evitar ruídos indesejados, evitar que a placa sobreaqueça, melhor conexão dos perifericos e para que acaso haja algum problema no futuro seja fácil de encontrar o que está gerando.</p>
+
+### Fabrição 
+
+<p align="justify">Para a montagem da placa, foi utilizado o laboratório de drones, onde possui a infraestrutura e os componentes. Após a montegem foi realizado os testes paralelamente. Primeiramente a montagem dos conversore, depois o circuitos de tensão, o circuito de corrente e por último os circuitos perifericos</p>
+<picture>
+ <img alt="placa montada" src="img/placa.png">
+</picture>
+
+### Testes
+<p align="justify">Para os conversores foi verificado os Leds correspondente a cada tensão (12V e 5V) e realizado a leitura em cada ponto de alimentação através de um multimeto, a placa respondeu conforme o esperado, para o teste de tensão e corrente, foi seguido o seguinte procedimento:</p>
+ <p>- Conetar a entrada da placa em uma bateria de 12s (+- 48V) </p>
+ <p>- Conectar a saída da placa (XT60) em uma carga resistiva variavél</p>
+ <p>- Aferir com um multimetro os pontos: corrente na carga,	tensão na bateria, tensão na saída do	ACS, tensão no iBAT e tensão no	VBUS</p>
+ <p>- Aumentar a corrente (associando mais resistores) e reprdozir o procedimento</p>
+<p align="justify">Com isso foi possível preenher a tabela apresentada a seguir</p>
+
+ <img alt="tabela dos resultados" src="img/comparacao.png">
+
+ <p align="justify">Através dessa tabela, o objetivo da placa é concluido. Apesar de ter um erro, ele é desconsideravél já que em correntes mais altas, que é onde a placa atua, o erro se matém em 1%</p>
+ 
 ### Programação
+
+<p align="justify">Na parte de programação, está sendo desenvolvido um script que faz a leitura do Vbus e do ibat e armazena eles em um arquivo de log. O que se obteve até agora foi apenas efetuar o print na tela dessas tensões lidas, o que já é eficiente para o seu objetivo final.</p>
