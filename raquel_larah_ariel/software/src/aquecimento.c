@@ -2,6 +2,8 @@
 #include <avr/io.h>
 
 #include "aquecimento.h"
+#include <stdio.h>
+#include "lcd.h"
 
 static uint16_t aquecimentoTarget;
 static aquecimentoStatusType aquecimentoStatus;
@@ -29,7 +31,7 @@ void aquecimentoInit()
 
 void aquecimentoEnable()
 {
-    aquecimentoStatus = AQUECIMENTO_HEATING;
+    aquecimentoStatus = AQUECIMENTO_ENABLED;
 }
 
 void aquecimentoDisable()
@@ -40,18 +42,19 @@ void aquecimentoDisable()
 
 void aquecimentoUpdate(uint16_t temperature)
 {
-    if (!aquecimentoStatus == AQUECIMENTO_DISABLED)
+    if (aquecimentoStatus == AQUECIMENTO_DISABLED)
         aquecimentoStatus = AQUECIMENTO_DISABLED;
-    else if (temperature < aquecimentoTarget)
+    else if (temperature <= aquecimentoTarget)
         aquecimentoStatus = AQUECIMENTO_HEATING;
-    else if (temperature > aquecimentoTarget + 5)
+    else if (temperature >= aquecimentoTarget + 5)
         aquecimentoStatus = AQUECIMENTO_COOLING;
-
+	
     switch (aquecimentoStatus)
     {
     case AQUECIMENTO_HEATING:
         aquecimentoLiga();
         break;
+	case AQUECIMENTO_ENABLED:
     case AQUECIMENTO_COOLING:
     case AQUECIMENTO_DISABLED:
         aquecimentoDesliga();
@@ -60,7 +63,7 @@ void aquecimentoUpdate(uint16_t temperature)
 }
 
 aquecimentoStatusType aquecimentoStatusGet()
-{
+{	
     return aquecimentoStatus;
 }
 
@@ -94,7 +97,7 @@ void aquecimentoTargetDec()
 
 const char *aquecimentoTargetStr()
 {
-    static char str[3] = "tt";
-    snprintf(str, 5, "%02d", aquecimentoTarget);
+    static char str[5] = "1234";
+    snprintf(str, 5, "%02d%cC", aquecimentoTarget, 0xDF);
     return str;
 }

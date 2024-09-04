@@ -44,7 +44,7 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
       <AvrGcc>
-  <avrgcc.common.Device>-mmcu=atmega328p -B "%24(PackRepoDir)\atmel\ATmega_DFP\1.6.364\gcc\dev\atmega328p"</avrgcc.common.Device>
+  <avrgcc.common.Device>-mmcu=atmega328p -B "%24(PackRepoDir)\atmel\ATmega_DFP\1.7.374\gcc\dev\atmega328p"</avrgcc.common.Device>
   <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
   <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
   <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
@@ -63,6 +63,7 @@
       <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.6.364\include\</Value>
       <Value>../include</Value>
       <Value>../include/ds18b20</Value>
+      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.7.374\include\</Value>
     </ListValues>
   </avrgcc.compiler.directories.IncludePaths>
   <avrgcc.compiler.optimization.level>Optimize for size (-Os)</avrgcc.compiler.optimization.level>
@@ -77,6 +78,7 @@
   <avrgcc.assembler.general.IncludePaths>
     <ListValues>
       <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.6.364\include\</Value>
+      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.7.374\include\</Value>
     </ListValues>
   </avrgcc.assembler.general.IncludePaths>
 </AvrGcc>
@@ -85,41 +87,43 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <ToolchainSettings>
       <AvrGcc>
-        <avrgcc.common.Device>-mmcu=atmega328p -B "%24(PackRepoDir)\atmel\ATmega_DFP\1.6.364\gcc\dev\atmega328p"</avrgcc.common.Device>
-        <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
-        <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
-        <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
-        <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
-        <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
-        <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
-        <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
-        <avrgcc.compiler.symbols.DefSymbols>
-          <ListValues>
-            <Value>DEBUG</Value>
-          </ListValues>
-        </avrgcc.compiler.symbols.DefSymbols>
-        <avrgcc.compiler.directories.IncludePaths>
-          <ListValues>
-            <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.6.364\include\</Value>
-          </ListValues>
-        </avrgcc.compiler.directories.IncludePaths>
-        <avrgcc.compiler.optimization.level>Optimize debugging experience (-Og)</avrgcc.compiler.optimization.level>
-        <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
-        <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
-        <avrgcc.compiler.optimization.DebugLevel>Default (-g2)</avrgcc.compiler.optimization.DebugLevel>
-        <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
-        <avrgcc.linker.libraries.Libraries>
-          <ListValues>
-            <Value>libm</Value>
-          </ListValues>
-        </avrgcc.linker.libraries.Libraries>
-        <avrgcc.assembler.general.IncludePaths>
-          <ListValues>
-            <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.6.364\include\</Value>
-          </ListValues>
-        </avrgcc.assembler.general.IncludePaths>
-        <avrgcc.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcc.assembler.debugging.DebugLevel>
-      </AvrGcc>
+  <avrgcc.common.Device>-mmcu=atmega328p -B "%24(PackRepoDir)\atmel\ATmega_DFP\1.7.374\gcc\dev\atmega328p"</avrgcc.common.Device>
+  <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
+  <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
+  <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
+  <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
+  <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
+  <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
+  <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
+  <avrgcc.compiler.symbols.DefSymbols>
+    <ListValues>
+      <Value>DEBUG</Value>
+    </ListValues>
+  </avrgcc.compiler.symbols.DefSymbols>
+  <avrgcc.compiler.directories.IncludePaths>
+    <ListValues>
+      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.6.364\include\</Value>
+      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.7.374\include\</Value>
+    </ListValues>
+  </avrgcc.compiler.directories.IncludePaths>
+  <avrgcc.compiler.optimization.level>Optimize debugging experience (-Og)</avrgcc.compiler.optimization.level>
+  <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
+  <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
+  <avrgcc.compiler.optimization.DebugLevel>Default (-g2)</avrgcc.compiler.optimization.DebugLevel>
+  <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
+  <avrgcc.linker.libraries.Libraries>
+    <ListValues>
+      <Value>libm</Value>
+    </ListValues>
+  </avrgcc.linker.libraries.Libraries>
+  <avrgcc.assembler.general.IncludePaths>
+    <ListValues>
+      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.6.364\include\</Value>
+      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.7.374\include\</Value>
+    </ListValues>
+  </avrgcc.assembler.general.IncludePaths>
+  <avrgcc.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcc.assembler.debugging.DebugLevel>
+</AvrGcc>
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
@@ -132,24 +136,19 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="include" />
-    <Folder Include="include\ds18b20" />
     <Folder Include="src" />
-    <Folder Include="src\ds18b20" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="include\adc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\aquecimento.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="include\buttons.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\ds18b20\ds18b20.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\ds18b20\onewire.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\ds18b20\romsearch.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\interface.h">
+    <Compile Include="include\eletrodos.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="include\lcd.h">
@@ -158,31 +157,28 @@
     <Compile Include="include\main.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\main_fsm.h">
+    <Compile Include="include\motor.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\onewire.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="include\termometro.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\usart.h">
+    <Compile Include="include\timing.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\variables.h">
+    <Compile Include="src\adc.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\aquecimento.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\buttons.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\ds18b20\ds18b20.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\ds18b20\onewire.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\ds18b20\romsearch.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\interface.c">
+    <Compile Include="src\eletrodos.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\lcd.c">
@@ -191,16 +187,16 @@
     <Compile Include="src\main.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\main_fsm.c">
+    <Compile Include="src\motor.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\onewire.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\termometro.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\usart.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\variables.c">
+    <Compile Include="src\timing.c">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>

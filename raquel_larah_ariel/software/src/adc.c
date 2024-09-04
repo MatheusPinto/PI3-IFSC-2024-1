@@ -31,8 +31,8 @@ int16_t adcValue(void)
 
 const char *adcToString()
 {
-	static char str[6] = "sCc";
-	snprintf(str, 6, "%+02dmA", adcValue());
+	static char str[6] = "sCcmA";
+	snprintf(str, 6, "%+03dmA", adcValue()/10);
 	return str;
 }
 

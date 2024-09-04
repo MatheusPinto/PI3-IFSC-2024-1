@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include "main.h"
+#include <stdio.h>
 
 #include "timing.h"
 
@@ -70,7 +71,7 @@ void timingTotalEnable(uint8_t flag)
 }
 void timingIntervalEnable(uint8_t flag)
 {
-    if (flag)
+    if (flag && timingInterval > 0)
         timingStatus |= TIMING_INTERVAL_ENABLED;
     else
         timingStatus &= ~TIMING_INTERVAL_ENABLED;
@@ -125,6 +126,6 @@ void timingTotalDec()
 const char *timingTotalStr(void)
 {
     static char str[6] = "H?mmh";
-    snprintf(str, 6, "%d:%02d", timingTotal / 60000 / 60, timingTotal / 60000);
+    snprintf(str, 6, "%d:%02dh", (uint8_t) (timingTotal / 60000 / 60), (uint8_t) (timingTotal / 60000)%60);
     return str;
 }

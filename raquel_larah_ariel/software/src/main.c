@@ -81,7 +81,7 @@ struct
 		VELOCITY,
 	} selected;
 
-} vars = {
+	} vars = {
 	.temperature = 0,
 	.thermo_result = 0,
 	.adc_max = 0,
@@ -113,6 +113,8 @@ int main(void)
 
 	main_timer = 0;
 	TCNT1 = 0;
+	
+	adcEnable();
 	sei();
 	while (1)
 	{
@@ -122,7 +124,7 @@ int main(void)
 			vars.error = SYNC;
 			main_state = MS_ERROR;
 		}
-		while (main_timer <= 1)
+		while (main_timer != 1)
 		{
 			sei();
 			sleep_mode();
@@ -133,22 +135,22 @@ int main(void)
 		timingUpdate();
 		termo_update();
 		vars.thermo_result = termo_read(&vars.temperature);
+		aquecimentoUpdate(vars.temperature);
 		switch (vars.thermo_result)
 		{
-		case TERMO_UNINIT:
+			case TERMO_READY:
+			case TERMO_UNINIT:
 			termo_conv();
-		case TERMO_READY:
-			aquecimentoUpdate(vars.temperature);
 			break;
-		case TERMO_ERROR_COM:
+			case TERMO_ERROR_COM:
 			vars.error = THERMO_COM;
 			main_state = MS_ERROR;
 			break;
-		case TERMO_ERROR_CRC:
+			case TERMO_ERROR_CRC:
 			vars.error = THERMO_CRC;
 			main_state = MS_ERROR;
 			break;
-		case TERMO_ERROR_PULL:
+			case TERMO_ERROR_PULL:
 			vars.error = THERMO_PULL;
 			main_state = MS_ERROR;
 			break;
@@ -158,50 +160,50 @@ int main(void)
 
 		switch (main_state)
 		{
-		case MS_INIT_OE:
+			case MS_INIT_OE:
 			main_state = MS_INIT;
 			break;
-		case MS_INIT:
-			if (vars.thermo_result == TERMO_READY)
-				main_state = MS_SELECT_OE;
+			case MS_INIT:
+			//if (vars.thermo_result == TERMO_READY)
+			main_state = MS_SELECT_OE;
 			break;
-		case MS_SELECT_OE:
+			case MS_SELECT_OE:
 			main_state = MS_SELECT;
 			break;
-		case MS_SELECT:
+			case MS_SELECT:
 			if (buttonsOk())
 			{
 				if (vars.selected == START)
-					main_state = MS_PREPARE_OE;
+				main_state = MS_PREPARE_OE;
 				else
-					main_state = MS_EDIT_OE;
+				main_state = MS_EDIT_OE;
 			}
 			break;
-		case MS_EDIT_OE:
+			case MS_EDIT_OE:
 			main_state = MS_EDIT;
 			break;
-		case MS_EDIT:
+			case MS_EDIT:
 			if (buttonsOk())
-				main_state = MS_SELECT_OE;
+			main_state = MS_SELECT_OE;
 			break;
-		case MS_PREPARE_OE:
+			case MS_PREPARE_OE:
 			main_state = MS_PREPARE;
 			break;
-		case MS_PREPARE:
+			case MS_PREPARE:
 			if (buttonsOk())
 				main_state = MS_SELECT_OE;
-			if (aquecimentoStatusGet() == AQUECIMENTO_COOLING && vars.adc_max > 90)
+			if(aquecimentoStatusGet() == AQUECIMENTO_COOLING && vars.adc_max > 90)
 				main_state = MS_RUN_OE;
 			break;
-		case MS_RUN_OE:
+			case MS_RUN_OE:
 			main_state = MS_RUN;
 			break;
-		case MS_RUN:
+			case MS_RUN:
 			if (buttonsOk())
-				main_state = MS_SELECT_OE;
+			main_state = MS_SELECT_OE;
 			break;
-		case MAIN_STATE_LENGTH:
-		case MS_ERROR:
+			case MAIN_STATE_LENGTH:
+			case MS_ERROR:
 			break;
 		}
 	}
@@ -232,19 +234,19 @@ uint8_t select(uint8_t sel, char *c)
 {
 	switch (sel)
 	{
-	case START:
+		case START:
 		*c = '>';
 		return 0xC0 + 15;
-	case TARGET_TEMP:
+		case TARGET_TEMP:
 		*c = '>';
 		return 0x80 + 0;
-	case INTERVAL:
+		case INTERVAL:
 		*c = '<';
 		return 0x80 + 15;
-	case TOTAL_TIME:
+		case TOTAL_TIME:
 		*c = '>';
 		return 0xC0 + 0;
-	case VELOCITY:
+		case VELOCITY:
 		*c = '<';
 		return 0xC0 + 15;
 	}
@@ -257,11 +259,11 @@ void ms_select_oe(void)
 	char line[17];
 
 	lcd_SendCmd(0x01);
-	snprintf(line, 17, " T:%s%cC i:%sdmin ", aquecimentoTargetStr(), 0xDF, timingIntervalStr());
+	snprintf(line, 17, " T:%s  i:%s ", aquecimentoTargetStr(), timingIntervalStr());
 	lcd_Write(line);
 
 	lcd_SendCmd(0xC0);
-	snprintf(line, 17, " t:%sh V:%s ", timingTotalStr(), motorStr());
+	snprintf(line, 17, " t:%s  V:%s ", timingTotalStr(), motorStr());
 	lcd_Write(line);
 
 	char c;
@@ -273,7 +275,7 @@ void ms_select_oe(void)
 void ms_select(void)
 {
 	if (buttonsDown() == 0 && buttonsUp() == 0)
-		return;
+	return;
 
 	char k;
 	uint8_t cmd = select(vars.selected, &k);
@@ -282,35 +284,35 @@ void ms_select(void)
 
 	switch (vars.selected)
 	{
-	case START:
+		case START:
 		if (buttonsUp())
-			vars.selected = VELOCITY;
+		vars.selected = VELOCITY;
 		if (buttonsDown())
-			vars.selected = TARGET_TEMP;
+		vars.selected = TARGET_TEMP;
 		break;
-	case TARGET_TEMP:
+		case TARGET_TEMP:
 		if (buttonsUp())
-			vars.selected = START;
+		vars.selected = START;
 		if (buttonsDown())
-			vars.selected = INTERVAL;
+		vars.selected = INTERVAL;
 		break;
-	case INTERVAL:
+		case INTERVAL:
 		if (buttonsUp())
-			vars.selected = TARGET_TEMP;
+		vars.selected = TARGET_TEMP;
 		if (buttonsDown())
-			vars.selected = TOTAL_TIME;
+		vars.selected = TOTAL_TIME;
 		break;
-	case TOTAL_TIME:
+		case TOTAL_TIME:
 		if (buttonsUp())
-			vars.selected = INTERVAL;
+		vars.selected = INTERVAL;
 		if (buttonsDown())
-			vars.selected = VELOCITY;
+		vars.selected = VELOCITY;
 		break;
-	case VELOCITY:
+		case VELOCITY:
 		if (buttonsUp())
-			vars.selected = TOTAL_TIME;
+		vars.selected = TOTAL_TIME;
 		if (buttonsDown())
-			vars.selected = START;
+		vars.selected = START;
 		break;
 	}
 
@@ -327,24 +329,24 @@ void ms_edit_oe(void)
 
 	switch (vars.selected)
 	{
-	case START: // impossible state
+		case START: // impossible state
 		break;
-	case TARGET_TEMP:
+		case TARGET_TEMP:
 		lcd_Write("Temperatura");
 		lcd_SendCmd(0xC0);
 		lcd_Write(aquecimentoTargetStr());
 		break;
-	case INTERVAL:
+		case INTERVAL:
 		lcd_Write("Intervalo");
 		lcd_SendCmd(0xC0);
 		lcd_Write(timingIntervalStr());
 		break;
-	case TOTAL_TIME:
+		case TOTAL_TIME:
 		lcd_Write("Tempo Total");
 		lcd_SendCmd(0xC0);
 		lcd_Write(timingTotalStr());
 		break;
-	case VELOCITY:
+		case VELOCITY:
 		lcd_Write("Velocidade");
 		lcd_SendCmd(0xC0);
 		lcd_Write(motorStr());
@@ -354,41 +356,43 @@ void ms_edit_oe(void)
 
 void ms_edit(void)
 {
+	buttonsDownBurst(1);
+	buttonsUpBurst(1);
 	if (buttonsDown() == 0 && buttonsUp() == 0)
-		return;
+	return;
 
 	lcd_SendCmd(0xC0);
 	switch (vars.selected)
 	{
-	case START: // impossible state
+		case START: // impossible state
 		break;
-	case TARGET_TEMP:
+		case TARGET_TEMP:
 		if (buttonsUp())
-			aquecimentoTargetInc();
+		aquecimentoTargetInc();
 		if (buttonsDown())
-			aquecimentoTargetDec();
+		aquecimentoTargetDec();
 		lcd_Write(aquecimentoTargetStr());
 		break;
-	case INTERVAL:
+		case INTERVAL:
 		if (buttonsUp())
-			timingIntervalInc();
+		timingIntervalInc();
 		if (buttonsDown())
-			timingIntervalDec();
+		timingIntervalDec();
 		lcd_Write(timingIntervalStr());
 		break;
-	case TOTAL_TIME:
+		case TOTAL_TIME:
 		if (buttonsUp())
-			timingTotalInc();
+		timingTotalInc();
 		if (buttonsDown())
-			timingTotalDec();
+		timingTotalDec();
 		lcd_Write(timingTotalStr());
 		break;
-	case VELOCITY:
+		case VELOCITY:
 		motorEnable();
 		if (buttonsUp())
-			motorInc();
+		motorInc();
 		if (buttonsDown())
-			motorDec();
+		motorDec();
 		lcd_Write(motorStr());
 		break;
 	}
@@ -402,19 +406,19 @@ void ms_prepare_oe(void)
 	lcd_Write("Aguarde");
 	lcd_SendCmd(0xC0);
 	char line[17];
-	snprintf(line, 17, "%d%cC/%s %s", vars.temperature, 0xDF, aquecimentoTargetStr(), adcToString());
+	snprintf(line, 17, "%02d%cC/%s  %s", vars.temperature, 0xDF, aquecimentoTargetStr(), adcToString());
 	lcd_Write(line);
 
 	vars.adc_max = 0;
 
 	timingRefreshEnable(1);
+	
+	aquecimentoEnable();
 }
 
 void ms_prepare(void)
 {
-	aquecimentoEnable();
-
-	if (adcValue() > 9)
+	if (adcValue() > 90)
 	{
 		eletrodosOff();
 		vars.adc_max = adcValue();
@@ -425,11 +429,11 @@ void ms_prepare(void)
 	}
 
 	if (!timingRefreshDone())
-		return;
+	return;
 
 	lcd_SendCmd(0xC0 + 0);
-	char str[5] = "..°C";
-	snprintf(str, 17, "%02d%cC/%s %s", vars.temperature, 0xDF, aquecimentoTargetStr(), adcToString());
+	char str[17] = "..°C";
+	snprintf(str, 17, "%02d%cC/%s  %s", vars.temperature, 0xDF, aquecimentoTargetStr(), vars.adc_max > 90 ? "     " : adcToString());
 	lcd_Write(str);
 }
 
@@ -437,29 +441,40 @@ void ms_run_oe(void)
 {
 	char line[17];
 	lcd_SendCmd(0x01);
-	snprintf(line, 17, "T:%02d%cC i:%s", vars.temperature, 0xDF, adcToString());
+	snprintf(line, 17, "T:%d%cC   i:%s", vars.temperature, 0xDF, adcToString());
 	lcd_Write(line);
 
 	lcd_SendCmd(0xC0);
-	snprintf(line, 17, "t:%s V:%s", timingTotalStr(), motorStr());
+	snprintf(line, 17, "t:%s    V:%s", timingTotalStr(), motorStr());
 	lcd_Write(line);
 	timingRefreshEnable(1);
+	
+	aquecimentoEnable();
 }
 void ms_run(void)
 {
-	aquecimentoEnable(1);
 	motorEnable();
-
-	if (!timingRefreshDone())
-		return;
-
+	timingTotalEnable(1);
+	timingIntervalEnable(1);
+	eletrodosPos();
+	
+	if(timingIntervalDone()) {
+		eletrodosInv();
+	}
+	
+	if (buttonsDown() == 0 && buttonsUp() == 0 && timingRefreshDone() == 0)
+	return;
+	
+	if (buttonsDown()) motorDec();
+	else if (buttonsUp()) motorInc();
+	
 	char line[17];
 	lcd_SendCmd(0x01);
-	snprintf(line, 17, "T:%s i:%s", vars.temperature, 0xDF, adcToString());
+	snprintf(line, 17, "T:%d%cC   i:%s", vars.temperature, 0xDF, adcToString());
 	lcd_Write(line);
 
 	lcd_SendCmd(0xC0);
-	snprintf(line, 17, "t:%s V:%s", timingTotalStr(), motorStr());
+	snprintf(line, 17, "t:%s    V:%s", timingTotalStr(), motorStr());
 	lcd_Write(line);
 }
 void ms_error()
@@ -467,22 +482,24 @@ void ms_error()
 	lcd_SendCmd(0x01);
 	switch (vars.error)
 	{
-	case NONE:
+		case NONE:
 		lcd_Write("NONE");
 		break;
-	case SYNC:
+		case SYNC:
 		lcd_Write("SYNC");
 		break;
-	case THERMO_COM:
+		case THERMO_COM:
 		lcd_Write("THERMO_COM");
 		break;
-	case THERMO_CRC:
+		case THERMO_CRC:
 		lcd_Write("THERMO_CRC");
 		break;
-	case THERMO_PULL:
+		case THERMO_PULL:
 		lcd_Write("THERMO_PULL");
 		break;
 	}
+	cli();
+	sleep_mode();
 }
 
 ISR(TIMER1_COMPA_vect)
