@@ -256,7 +256,7 @@ Além disso, a implementação no ESP32 desempenha um papel crucial no projeto. 
 
 Em `interface.py` o código define a classe `MainApp`, que é responsável por gerenciar a interface principal do aplicativo. Essa interface oferece três funcionalidades principais, acessíveis por meio de botões: `Editar Esboço`, `Conectar ao ESP`, e `Mapa de Calor`. Cada funcionalidade abre uma nova janela específica para a execução de tarefas distintas.
 
-![Tela_inicial](./Imagens/tela_inicial.png)
+![Tela_inicial](./Imagens/Tela_inicial.png)
 
 O código completo pode ser visualizado a seguir:  [Interface.py](./Interface.py)
 
