@@ -365,22 +365,22 @@ Em termos de hardware, foi desenvolvida uma PCB protótipo para o projeto, que i
 Os testes finais foram realizados para assegurar a funcionalidade e a precisão do dispositivo nas medições. Para isso, foi desenhado um esboço real do local a ser avaliado, e todos os pontos de medição foram percorridos conforme definido pela aplicação. Os resultados obtidos, incluindo a intensidade do sinal para cada ponto de acesso identificado, os valores máximos de RSSI e a latência da rede, são apresentados a seguir:
 
  **Mapa de calor AP1**
- ![Mapa de calor AP1](./Imagens/Testes_ap1.png)
+ ![Mapa de calor AP1](./Imagens/Teste_ap1.png)
 
  **Mapa de calor AP2**
- ![Mapa de calor AP2](./Imagens/Testes_ap2.png)
+ ![Mapa de calor AP2](./Imagens/Teste_ap2.png)
 
  **Mapa de calor AP3**
- ![Mapa de calor AP3](./Imagens/Testes_ap3.png)
+ ![Mapa de calor AP3](./Imagens/Teste_ap3.png)
 
  **Mapa de calor AP4**
- ![Mapa de calor AP4](./Imagens/Testes_ap4.png)
+ ![Mapa de calor AP4](./Imagens/Teste_ap4.png)
 
  **Mapa de calor da Latência**
- ![Mapa de calor Latência](./Imagens/Testes_latencia.png)
+ ![Mapa de calor Latência](./Imagens/Teste_latencia.png)
 
  **Mapa de calor Máximo RSSI**
- ![Mapa de calor Máximos](./Imagens/Testes_maximos.png)
+ ![Mapa de calor Máximos](./Imagens/Teste_maximos.png)
 	
 ## Conclusão
 
