@@ -34,6 +34,10 @@ Exemplos de aplica
 ~~Requisitos Não Funcionais: Inclua aspectos como desempenho, confiabilidade, usabilidade, e segurança.~~
 **Requisitos de Software e Hardware:** O sistema devera ser implementado utilizando como hardware um Raspberry Pi 4 Model B com Raspberry Pi OS, onde será desenvolvido a aplicação do smart mirror e a integração de módulos que tragam funcionalidades úteis ao dia a dia do usuário.
 
+### Visão geral da ideia a ser implementada
+<img src="images/Visão_geral.JPG" align="center" width="70%" alt="Visão geral">
+ *Obs.: módulos indicados em vermelhos não foram implementados até o momento devido a alguma limitação técnica ou de custo. Itens indicados em verde foram implementados com sucesso*
+
 ## 3. Lista de Componentes
 
 *   Raspberry Pi 4 Model B 
