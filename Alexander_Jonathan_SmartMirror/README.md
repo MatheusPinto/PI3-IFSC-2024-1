@@ -23,20 +23,50 @@ Campus Florianópolis<br></b>
 
 ## 1. Introdução
 
-O projeto do Smart Mirror visa desenvolver um espelho inteligente capaz de exibir informações úteis diretamente na superfície refletora enquanto o usuário realiza suas atividades diárias. A inovação deste dispositivo está na integração de tecnologia avançada com um objeto comum, transformando o espelho em uma interface interativa que proporciona acesso rápido a uma variedade de serviços e informações.
+### Objetivo do Projeto
+O Espelho Inteligente é um projeto inovador que combina tecnologia e praticidade, transformando um espelho comum em uma interface inteligente e interativa. O propósito do projeto é integrar informações úteis e personalizadas diretamente na superfície do espelho, permitindo ao usuário acessar uma variedade de serviços enquanto realiza suas atividades cotidianas, como se arrumar para o dia ou se preparar para dormir.
 
-O principal objetivo do Smart Mirror é fornecer informações relevantes de forma prática e imediata, integrando-as ao momento em que o usuário se prepara para o dia. Com uma interface intuitiva, o espelho pode exibir dados como a previsão do tempo, notícias, agenda do dia, notificações de redes sociais, status de dispositivos inteligentes na casa, entre outros.
+Este projeto foi desenvolvido com foco em automação residencial, personalização e aprendizado prático com dispositivos como o Raspberry Pi. A ideia central é proporcionar uma experiência de usuário que seja funcional e informativa, tornando as rotinas diárias mais eficientes e conectadas. Além disso, o desenvolvimento do Espelho Inteligente oferece uma oportunidade única para explorar e aplicar conhecimentos de programação, eletrônica e design de interfaces.
+
+### Descrição Geral
+
+O Espelho Inteligente é uma interface digital refletiva composta por componentes como um monitor, um Raspberry Pi, uma película reflexiva, sensores e uma moldura de madeira. Ele funciona como um "dashboard" que exibe informações variadas, como hora, calendário, previsão do tempo, notícias, e até notificações personalizadas. A integração de módulos configuráveis permite que o espelho seja altamente personalizável, adaptando-se às necessidades e preferências de cada usuário.
 
 ## 2. Requisitos
 
-**Requisitos Funcionais:** O que o Smart Mirror deve ser capaz de fazer interagir com o usuário de forma a permitir a transição entre a operação como um espelho comum(apenas refletir o usuário) e como um dispositivo smart (apresentar funcionalidades de conectividade). O 
-Exemplos de aplica
-~~Requisitos Não Funcionais: Inclua aspectos como desempenho, confiabilidade, usabilidade, e segurança.~~
-**Requisitos de Software e Hardware:** O sistema devera ser implementado utilizando como hardware um Raspberry Pi 4 Model B com Raspberry Pi OS, onde será desenvolvido a aplicação do smart mirror e a integração de módulos que tragam funcionalidades úteis ao dia a dia do usuário.
+### Requisitos Funcionais
+O Espelho Inteligente deve ser capaz de funcionar tanto como um espelho tradicional quanto como um dispositivo inteligente. Para isso, ele deve:
 
-### Visão geral da ideia a ser implementada
-<img src="images/Visão_geral.JPG" align="center" width="70%" alt="Visão geral">
- *Obs.: módulos indicados em vermelhos não foram implementados até o momento devido a alguma limitação técnica ou de custo. Itens indicados em verde foram implementados com sucesso*
+**Exibir informações essenciais:** Mostrar hora, data, previsão do tempo, notícias, agenda do dia e outros dados úteis na superfície refletora.<br>
+**Controlar por sensor de movimento:** Alternar entre o modo espelho e o modo inteligente ao detectar a presença do usuário.<br>
+**Personalização de módulos:** Permitir a configuração e personalização dos módulos de exibição para que o usuário escolha quais informações deseja visualizar.<br>
+**Notificações:** Apresentar notificações de eventos importantes, como lembretes, e-mails ou mensagens de redes sociais, caso configurado.<br>
+
+### Requisitos Não Necessáriamente Aplicáveis
+**Desempenho:** O Espelho Inteligente deve ser responsivo, com tempos de carregamento mínimos para os módulos exibidos e fluidez na troca de informações, dependerá de API's e módulos de terceiros<br>
+**Confiabilidade:** O sistema deve operar de forma contínua e estável, sem falhas ou reinicializações frequentes, dependerá de API's e módulos de terceiros<br>
+**Usabilidade:** A interface deve ser simples e intuitiva, de modo que qualquer usuário, independentemente de sua familiaridade com tecnologia, consiga interagir facilmente, caso não configurado<br>
+**Segurança:** Deve garantir que dados sensíveis, como notificações pessoais, sejam tratados com privacidade, e que o sistema esteja protegido contra acesso não autorizado, caso não configurado<br>
+
+### Requisitos de Software e Hardware
+#### • Hardware:
+
+**Raspberry Pi 4 Model B:** Placa de processamento principal do projeto.<br>
+**Monitor:** Para exibição das informações por trás do espelho.<br>
+**Película reflexiva:** Aplicada no vidro do espelho para permitir que o monitor exiba informações enquanto mantém a reflexão.<br>
+**Moldura de madeira:** Estrutura que acomoda todos os componentes, incluindo o monitor, vidro do espelho, sensor, etc.<br>
+**Sensores:** Para detectar a presença do usuário e ativar/desativar outras funcionalidades do espelho.<br>
+**Fonte de alimentação:** Para fornecer energia ao Raspberry Pi e outros componentes.
+
+#### • Software:
+
+**Raspberry Pi OS:** Sistema operacional baseado em Linux, utilizado para rodar a Aplicação.<br>
+**Framework:** Plataforma modular que permite adicionar, remover e configurar módulos de exibição.<br>
+**Bibliotecas de Sensores:** Para integrar sensores, como o sensor de movimento, são utilizadas bibliotecas específicas que permitem a comunicação entre o Raspberry Pi e os dispositivos conectados. Essas bibliotecas fornecem funções prontas para ler dados de sensores, detectar eventos, e acionar ações correspondentes (por exemplo, acender a tela do espelho ao detectar movimento). Elas são escritas em linguagens como Python ou JavaScript, dependendo do sensor e da necessidade de integração com o espelho.<br>
+**Electron:**  Um framework que permite criar aplicações de desktop utilizando tecnologias web como HTML, CSS e JavaScript. O Electron é utilizado para executar a aplicação em um ambiente de desktop no Raspberry Pi, transformando o código web em uma aplicação executável. Isso facilita a integração com o hardware do Raspberry Pi e permite que a interface seja exibida de maneira otimizada em tela cheia.<br>
+**Node.js:** Um ambiente de execução JavaScript que roda no servidor e é usado para gerenciar a lógica da interface e dos módulos. O Node.js facilita a comunicação entre o espelho e os serviços externos, como APIs de notícias e previsão do tempo, além de gerenciar as interações do usuário com os módulos do espelho.<br>
+**Bibliotecas Adicionais:** Diversas bibliotecas de JavaScript e Node.js são utilizadas para funcionalidades específicas, como manipulação de data e hora, comunicação com serviços de terceiros (ex.: APIs de previsão do tempo e notícias), e controle de exibição de informações. Algumas dessas bibliotecas são essenciais para o funcionamento dos módulos do projeto e garantem que os dados sejam apresentados de forma dinâmica e atualizada.<br>
+**Módulos Personalizados:** Scripts e aplicações adicionais para funcionalidades específicas (ex.: scripts para controle de sensor de movimento).<br>
 
 ## 3. Lista de Componentes
 
@@ -127,120 +157,89 @@ Conexões e Configurações Finais: ~~Descreva como o hardware foi conectado e m
 
 ## 5. Configuração do Software
 
-Instalação do Sistema Operacional: ~~Explicação passo a passo da instalação do sistema operacional no Raspberry Pi.~~
+### Instalação do Sistema Operacional
+Para começar, precisamos instalar o sistema operacional no Raspberry Pi. Neste projeto, vamos utilizar o Raspberry Pi OS, uma versão otimizada de Linux. O processo é simples:
 
-Configuração do Smart Mirror: ~~Detalhe como o software  foi instalado e configurado.~~
+**1.** Baixar a última versão do Raspberry Pi OS do site oficial.<br>
+**2.** Usar um o próprio software do Raspberry Pi para gravar a imagem do sistema operacional em um cartão microSD.<br>
+**3.** Inserir o cartão microSD no Raspberry Pi e conectar o dispositivo ao monitor, teclado e mouse.<br>
+**4.** Ligar o Raspberry Pi e seguir as instruções na tela para configurar o sistema operacional, incluindo a conexão à internet.<br>
 
-Instalação e customização dos Módulos:
+### Configuração da Aplicação
+Após o sistema operacional estar pronto, vamos instalar a base do projeto:
 
-Modulo agenda.  
-Etapas:
+**1.** Certificar de que o Node.js está instalado. Para isso, abrir o terminal no Raspberry Pi e instalar a versão mais recente do Node.js conforme as instruções da documentação oficial.<br>
+**2.** Verificar se o Git está instalado digitando git no terminal. Se não estiver, instalar com o comando **sudo apt-get install git**.<br>
+**3.** Clonar o repositório do projeto base com o comando:
 
-1. 1
-2. 2
-
- ```C
-
+ ```sh
+git clone https://github.com/MichMich/MagicMirror
  ```
 
-Modulo calendário.  
-Etapas:
+**4.** Entrar na pasta do projeto:
 
-1. 1
-2. 2
-
- ```C
-
- ```
- 
-Modulo previsão de tempo.  
-Etapas:
-
-1. 1
-2. 2
-
- ```C
-
+ ```sh
+cd MagicMirror/
  ```
 
-Modulo Cumprimentos/frase motivacionais.  
-Etapas:
+**5.** Instalar o aplicativo com:
 
-1. 1
-2. 2
-
- ```C
-
+ ```sh
+npm install
  ```
 
-Modulo Formula 1.  
-Etapas:
+**6.** Iniciar o aplicativo com o comando **npm start**.
 
-1. 1
-2. 2
 
- ```C
+### Instalação dos Módulos
+Com a aplicação funcionando, é hora de personalizar conforme a preferencia.
 
- ```
+### Módulos usados:
 
-Modulo Rádio.
-Etapas:
+**Hora, Calendário, Agenda, Tempo, Fórmula 1, Rádio, Notícias, Câmeras de Segurança, Informações do Hardware, Sinal Wi-Fi, Spotify, Youtube, Horário de Onibus e Modulos de Sensores**<br>
 
-1. 1
-2. 2
+A instalação e configuração dos módulos foi uma etapa que exigiu bastante pesquisa e trabalho. Cada módulo tem suas especificidades e desafios, API's e configurações, então foi necessário um mergulho nas documentações para entender como cada um deles funciona e como poderiam ser integrados ao projeto. Em alguns casos, foi preciso ajustar configurações detalhadamente, testar diferentes abordagens e, por vezes, até modificar grande parte dos códigos para alcançar o resultado desejado. Essa parte do processo envolveu bastante tentativas e erros, e um bom tempo dedicado a explorar soluções e encontrar a melhor forma de fazer cada módulo interagir de maneira fluida e eficiente com o sistema. Todo esse esforço foi importante para garantir que oprojeto possa oferecer uma experiência realmente personalizada e integrada, mostrando informações úteis de forma dinâmica e adaptada ao contexto do usuário.<br>
 
- ```C
+Alguns esforços específicos valem a pena ser mencionados, como é o caso da integração dos sensores de movimento ao projeto, no qual foi um desafio significativo e exigiu um trabalho considerável para alcançar o resultado desejado. O objetivo era utilizar os sensores para permitir a interação com o espelho, como mudar de página ou ativar funcionalidades com movimentos das mãos.
 
- ```
- 
-Modulo Feed de noticias.
-Etapas:
+Essa integração envolveu diversas etapas complexas:
 
-1. 1
-2. 2
+### Escolha do Sensor
+Inicialmente, foi necessário selecionar o sensor adequado para capturar movimentos de forma precisa. Diversos modelos foram avaliados para encontrar aquele que melhor atendia às necessidades do projeto.
 
- ```C
+Testamos alguns sensores diferentes antes de finalmente encontrar aquele que melhor atendia às nossas necessidades:
 
- ```
+**• APDS-9960:** Este sensor foi uma das primeiras opções testadas. Embora oferecesse boas funcionalidades, como detecção de proximidade e gestos, enfrentamos problemas com a precisão e a distância de detecção. O sensor frequentemente falhava em identificar corretamente os movimentos das mãos na distância desejada, o que comprometia a confiabilidade necessária para a aplicação.
 
-Modulo Câmeras segurança.  
-Etapas:
+<adicionar foto>
 
-1. 1
-2. 2
+**• GP2Y0A21:** O próximo sensor testado foi o GP2Y0A21, conhecido por sua capacidade de medir distâncias. No entanto, este sensor também teve suas limitações. A principal dificuldade foi com as bibliotecas e a integração com o software, que não suportavam bem o sensor, resultando em desempenho insatisfatório e falta de precisão na detecção.
 
- ```C
+<adicionar foto>
 
- ```
- 
-Modulo Informações de sistema.  
-Etapas:
+**• PAJ7620U2:** Finalmente, encontramos o sensor PAJ7620U2, que se mostrou muito mais adequado para nossa aplicação. Esse sensor conseguiu atender aos requisitos de detecção de movimento com maior precisão e confiabilidade, permitindo uma interação fluida com o o projeto. Sua integração foi mais eficiente, e o desempenho foi consistente com o que precisávamos para uma experiência de usuário satisfatória.
 
-1. 1
-2. 2
+<adicionar foto>
 
- ```C
+Durante essa jornada para encontrar o sensor ideal envolveu uma série de testes e ajustes, mas foi essencial para alcançar a funcionalidade desejada e garantir que o projeto respondesse de maneira precisa e confiável aos movimentos das mãos nas quais queriamos inicialmente.
 
- ```
- 
-Modulo Horários de ônibus.  
-Etapas:
+### Configuração do Hardware
+A instalação física e a conexão com o Raspberry Pi também exigiram um esforço considerável.
 
-1. 1
-2. 2
+**Instalação Física e Conexão:** A instalação do sensor e sua conexão com o Raspberry Pi envolveu vários ajustes finos. Cada componente teve que ser cuidadosamente posicionado e conectado aos pinos GPIO do Raspberry Pi. Esse processo exigiu atenção aos detalhes para garantir que todas as conexões estivessem firmes e corretamente configuradas, evitando problemas de comunicação e funcionamento incorreto.
 
- ```C
+**Ajustes nas Bibliotecas:** Após a instalação física, enfrentamos desafios com as bibliotecas necessárias para operar o sensor. As bibliotecas utilizadas inicialmente não estavam totalmente alinhadas com os requisitos do sensor, o que resultou em comportamento instável e dificuldades na detecção. Foram necessários ajustes e atualizações nas bibliotecas para melhorar a compatibilidade e a performance.
 
- ```
-Modulo Spotify.  
-Etapas:
+**Consultas e Testes:** Para resolver os problemas encontrados, realizamos diversas consultas em fóruns especializados e documentações técnicas. A interação com a comunidade e a busca por soluções em discussões online foram essenciais para entender as nuances do sensor e encontrar as melhores práticas para sua configuração. Cada solução encontrada foi testada rigorosamente para garantir que o sistema funcionasse de acordo com as expectativas.
 
-1. 1
-2. 2
+Esse processo de configuração foi desafiador e exigiu persistência, mas foi crucial para alcançar a integração bem-sucedida do sensor com o projetp. O esforço envolvido garantiu que o sensor de movimento funcionasse de maneira confiável e que o sistema oferecesse a interação intuitiva desejada.
 
- ```C
+### Desenvolvimento do Software
+O maior desafio foi fazer com que o sensor interagisse de forma eficiente com todos os módulos presentes. Isso envolveu a criação de scripts personalizados para processar os sinais do sensor e traduzi-los em ações específicas, como mudar a página exibida. Muitos testes e ajustes foram necessários para obter a sensibilidade adequada e assegurar que o sistema respondesse de maneira precisa e confiável aos movimentos.
 
- ```
+### Integração e Testes
+A integração do sensor com os módulos e a adaptação da aplicação para reconhecer e responder aos movimentos das mãos foram tarefas complexas. Diversas abordagens foram testadas, e muitas horas foram dedicadas a depurar e ajustar o comportamento do sistema para garantir uma experiência fluida e intuitiva. Processo de muita tentativa, erro e ajustes.
+
 ## 6. Funcionalidades Implementadas
 
 O Prototipo a ser apresentado foi organizado de forma a apresentar 3 telas com exemplos de aplicação para o usuário.
