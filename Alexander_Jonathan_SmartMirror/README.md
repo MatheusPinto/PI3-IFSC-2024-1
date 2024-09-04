@@ -271,10 +271,15 @@ O Prototipo a ser apresentado foi organizado de forma a apresentar 3 telas com e
 
 ## 8. Próximos Passos e Melhorias Futuras
 
-~~Dificuldades Encontradas:~~
+Em futuras implementações, identificamos diversas oportunidades de aprimoramento e expansão das funcionalidades do Smart Mirror. Algumas sugestões incluem:
+ - Execução de playslists (Tela 4 - canto superior esquedo);
+ - execução de videos do Youtube (Tela 4 - canto inferior esquedo);
+ - Integração com horáios de onibus (Tela 4 - canto superior direito);
 
 ### Tela 4 - implementação de outros prototipos
 <img src="images/Teala_4_implementada.jpeg" align="center" width="90%" alt="Tela 4">
+
+Além disso, seria interessante explorar a possibilidade de utilizar telas mais simples, visando reduzir o custo total do projeto. Outra sugestão seria a revisitar a possibilidade de uso de uma modura com interação touch screen, o que adicionaria uma maior versatilidade permitindo a implementação de módulos que requerem interações mais complexas com o usuário, como a entrada de dados.
 
 ## 9. Conclusão
 
