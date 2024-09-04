@@ -1,0 +1,4 @@
+.systemtemperature .temperatureUnit::before {
+    content: '°';
+    display: inline;    
+}
