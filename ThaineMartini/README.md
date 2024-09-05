@@ -109,7 +109,7 @@ Figura 1 - Diagrama do hardware
 
 <img alt="esultados" src="img/grafico1.png">
  <p> </p>
- <img alt="resultados" src="img/graficog2.png">
+ <img alt="resultados" src="img/grafico2.png">
  <p> </p>
  <p align="justify"> Com a equação da reta, calculamos, a partir da tensão no adc a corrente e a tensão no barramento, para comparar com o que foi medido por outro instrumento de medição. Com esses resultados, é possivél calcular o erro desse sistema, validando assim o sistema desenvolvido, como mostra a tabela a seguir.</p>
  <img alt="tabela dos resultados taotais" src="img/tabela3.png">
