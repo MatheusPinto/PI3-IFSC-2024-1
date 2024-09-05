@@ -25,3 +25,8 @@ Esse processo levou em torno de 7 minutos. Após desligado o ebulidor ambas as t
 Para o teste foi colocado 500m de água desmineralizada no becker interno. A distância entre os eletrodos foi ajustada até a obtenção dos 10mA aproximados necessários para o processo de eletrólise continuo da prata em solução aquosa.
 
 Esse processo levou em torno de 5 minutos. Sendo o momento inicial de ionização o mais demorado, pois após o primeiro momento com corrente na faixa de 10mA mesmo com a inversão dos pólos o tempo para estabilizar novamente em 10mA foi menor.
+
+## Primeiro teste de integração do sistema
+
+A parte lógica apresentou bom funcionamento, com respostas corretas ao acionamento dos botões e leitura do sensor de temperatura, porém o sinal de PWM foi inconsistente.
+Quanto a parte física, inicialmente a placa inferior funcionou mas durante a montagem foram necessários manipulações que levaram a placa a apresentar curto na alimentação 5V
