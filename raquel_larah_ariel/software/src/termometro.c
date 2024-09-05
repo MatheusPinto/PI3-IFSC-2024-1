@@ -4,7 +4,6 @@
 
 #include "termometro.h"
 #include "main.h"
-#include "onewire.h"
 
 #define TERMO_SKIP_ROM 0xCC
 #define TERMO_CONVERT 0x44
@@ -129,7 +128,6 @@ void termo_update()
 
 uint8_t oneWire_reset()
 {
-	return onewireInit(&TERMO_PORT, &TERMO_DDR, &TERMO_PORTIN, TERMO_MASK);
     uint8_t sreg = SREG; // Store status register
     cli();
     OW_FORCE_LOW();
@@ -147,7 +145,6 @@ uint8_t oneWire_reset()
 
 static void oneWire_write0()
 {
-	 onewireWriteBit(&TERMO_PORT, &TERMO_DDR, &TERMO_PORTIN, TERMO_MASK, 0); return;
     OW_FORCE_LOW();
     _delay_us(80);
     OW_FORCE_HIGH();
@@ -156,7 +153,6 @@ static void oneWire_write0()
 
 static void oneWire_write1()
 {
-	onewireWriteBit(&TERMO_PORT, &TERMO_DDR, &TERMO_PORTIN, TERMO_MASK, 1); return;
     OW_FORCE_LOW();
     _delay_us(8);
     OW_FORCE_HIGH();
@@ -165,7 +161,6 @@ static void oneWire_write1()
 
 static void oneWire_write(uint8_t byte)
 {
-	onewireWrite(&TERMO_PORT, &TERMO_DDR, &TERMO_PORTIN, TERMO_MASK,  byte);return;
     uint8_t sreg = SREG;
     cli();
     for (uint8_t i = 1; i != 0; i<<=1)
@@ -184,19 +179,17 @@ static void oneWire_write(uint8_t byte)
 
 static uint8_t oneWire_read_bit()
 {
-	return onewireReadBit(&TERMO_PORT, &TERMO_DDR, &TERMO_PORTIN, TERMO_MASK);
     OW_FORCE_LOW();
     _delay_us(2);
     OW_RELEASE();
     _delay_us(5);
-    uint8_t bit = TERMO_PORTIN & TERMO_MASK;
+    uint8_t bit = ((TERMO_PORTIN & TERMO_MASK) != 0);
     _delay_us(60);
     return bit;
 }
 
 static uint8_t oneWire_read()
 {
-	return onewireRead(&TERMO_PORT, &TERMO_DDR, &TERMO_PORTIN, TERMO_MASK);
     uint8_t sreg = SREG;
     cli();
     uint8_t data = 0;

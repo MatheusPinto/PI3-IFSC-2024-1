@@ -1,17 +1,15 @@
 #include <avr/io.h>
 #include "motor.h"
 
-static motorVelocityType motorDuty;
+static uint8_t motorDuty;
 
 void motorInit()
 {
     MOTOR_DDRR |= MOTOR_MASK;
     OCR2A = 255; // 16E6 / 255 / X = 1kHz
     OCR2B = MOTOR_OFF;
-    TCCR2A = (1 << COM2B0) | (1 << WGM21) | (1 << WGM20);
-    TCCR2B = (1 << CS22);
-
-    motorDuty = MOTOR_OFF;
+    TCCR2A = (1 << COM2B1) | (1 << COM2B0) | (1 << WGM21) | (1 << WGM20);
+    TCCR2B = (1 << CS22) | (1 << WGM22);
 }
 
 void motorEnable(void)
@@ -27,7 +25,6 @@ void motorDisable(void)
 void motorOff(void)
 {
     motorDuty = MOTOR_OFF;
-    motorDisable();
 }
 
 void motorLow(void)
@@ -59,6 +56,7 @@ void motorInc()
         motorHigh();
         break;
     case MOTOR_HIG:
+        motorHigh();
         break;
     }
 }
@@ -68,6 +66,7 @@ void motorDec()
     switch (motorDuty)
     {
     case MOTOR_OFF:
+        motorOff();
         break;
     case MOTOR_LOW:
         motorOff();

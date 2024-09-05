@@ -47,3 +47,13 @@ void eletrodosInv()
         eletrodosPos();
     }
 }
+
+eletrodosStatusType eletrodosStatus(void)
+{
+    if ((ELETRODOS_E_PORT & ELETRODOS_E_MASK) == 0)
+        return ELETRODOS_OFF;
+    if (ELETRODOS_P_PORT & ELETRODOS_P_MASK)
+        return ELETRODOS_POS;
+    if (ELETRODOS_N_PORT & ELETRODOS_N_MASK)
+        return ELETRODOS_NEG;
+}
