@@ -99,16 +99,20 @@ Figura 1 - Diagrama do hardware
  <img alt="placa montada" src="img/plc.jpeg">
 </picture>
 
-### Testes
-<p align="justify">Para os conversores foi verificado os Leds correspondente a cada tensão (12V e 5V) e realizado a leitura em cada ponto de alimentação através de um multimeto, a placa respondeu conforme o esperado, para o teste de tensão e corrente, foi seguido o seguinte procedimento:</p>
- <p>- Conetar a entrada da placa em uma bateria de 12s (+- 48V) </p>
- <p>- Conectar a saída da placa (XT60) em uma carga resistiva variavél</p>
- <p>- Aferir com um multimetro os pontos: corrente na carga,	tensão na bateria, tensão na saída do	ACS, tensão no iBAT e tensão no	VBUS</p>
- <p>- Aumentar a corrente (associando mais resistores) e reproduzir o procedimento</p>
+### Validação 
+<p align="justify">A placa tem como objetivo aferir a tensão e a corrente da saída de um sistema motor + gerador, após a medição essa tensão e transformada por meio de um sistema de condicionamento desses sinais, para não causar nenhum dano ao microcontrolador, ja que o seu ADC tem a tensão de entrada maxima de 3V. O circuito montado na placa foi válidado por meio de simulações e calculos anteriomente, mas é necessário válidar através da prática. Para essa validação foi medido, com outro instrumento de medição, a corrente e tensão reais do sistema e as tensões que representam as variaveis no ADC. Para uma analise mais precisa, foram feitas essas aferições 6 vezes, com tensões e correntes diferentes, isso foi possivel associando resistores de potência na saída da placa desenvolvida. Esses dados podem ser melhor análisados a seguir </p>
+ <img alt="tabela dos resultados" src="img/tabela1.png">
+ <p> </p>
+ <img alt="tabela dos resultados" src="img/tabela2.png">
+ <p> </p>
+<p align="justify">Com esses dados, é possivél plotar uma reta e obter a sua equação, que será utilzada para calcular a corrente e a tensão real, pelo valor lido no ADC. Essa equação será futuramente implementada no microcontrolador. Os gráficos plotados para calcular a equação da reta são mostrados a seguir</p>
 
-<p align="justify">Com isso foi possível preencher a tabela apresentada a seguir</p>
-
- <img alt="tabela dos resultados" src="img/comparacao.png">
+<img alt="esultados" src="img/grafico1.png">
+ <p> </p>
+ <img alt="resultados" src="img/raficog2.png">
+ <p> </p>
+ <p align="justify"> Com a equação da reta, calculamos, a partir da tensão no adc a corrente e a tensão no barramento, para comparar com o que foi medido por outro instrumento de medição. Com esses resultados, é possivél calcular o erro desse sistema, validando assim o sistema desenvolvido, como mostra a tabela a seguir.</p>
+ <img alt="tabela dos resultados taotais" src="img/tabela3.png">
 
  <p align="justify">Através dessa tabela, o objetivo da placa é concluido. Apesar de ter um erro, ele é desconsideravél já que em correntes mais altas, que é onde a placa atua, o erro se matém em 1%</p>
  
