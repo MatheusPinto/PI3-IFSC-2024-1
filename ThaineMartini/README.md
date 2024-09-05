@@ -112,10 +112,14 @@ Figura 1 - Diagrama do hardware
  <img alt="resultados" src="img/grafico2.png">
  <p> </p>
  <p align="justify"> Com a equação da reta, calculamos, a partir da tensão no adc a corrente e a tensão no barramento, para comparar com o que foi medido por outro instrumento de medição. Com esses resultados, é possivél calcular o erro desse sistema, validando assim o sistema desenvolvido, como mostra a tabela a seguir.</p>
- <img alt="tabela dos resultados taotais" src="img/tabela3.png">
+ <img alt="tabela dos resultados taotais" src="img/tabeela3.png">
 
- <p align="justify">Através dessa tabela, o objetivo da placa é concluido. Apesar de ter um erro, ele é desconsideravél já que em correntes mais altas, que é onde a placa atua, o erro se matém em 1%</p>
+ <p align="justify">Essa tabela comprova a eficiencia da placa, já que o erro é minimo e quase não afeta o resultado final.</p>
  
 ### Programação
 
 <p align="justify">Na parte de programação, está sendo desenvolvido um script que faz a leitura do Vbus e do ibat e armazena eles em um arquivo de log. O que se obteve até agora foi apenas efetuar o print na tela dessas tensões lidas, o que já é eficiente para o seu objetivo final.</p>
+
+### Melhorias futuras
+
+<p align="justify">A placa foi desenvolvida com bastantes recursos que ainda não foram aprofundados, futuramente pretendo colocar em prática esses recursos, como controle de servomotor, aferição de temperatura, armazenamento de dados via SDcard. Além da parte de programação que ainda a muito a ser desenvolvida.</p>
