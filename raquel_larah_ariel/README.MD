@@ -76,12 +76,28 @@ https://www.figma.com/proto/vzXWbpWkbP1SS4rhWi7TBW/Figma-basics?t=otWXFPbx3BhwNB
 - [ ] 1 Haste (20 cm de altura)
 - [ ] 1 hélice (6 cm diametro, 2cm de altura)
 - [x] 1 ebulidor 750 W
-- [ ] 1 Relé + acionamento
-- [ ] 1 Conversor CA/CC 5V 20W (HLK-20M5)
-- [ ] 1 Conversor CA/CC 24 05W (HLK-5M24)
+- [x] 1 Relé + acionamento
+- [x] 1 Conversor CA/CC 5V 20W (HLK-20M5)
+- [x] 1 Conversor CA/CC 24 05W (HLK-5M24)
 - [x] 1 motor DC (3V 13100 RPM DC MOTOR) 
 - [x] 1 sensor de temperatura (DS18B20)
 - [x] 1 display 16x2 (5LC01)
+
+## Resultados
+
+## Melhorias 
+Ao longo dos testes finais identificamos algumas melhorias que podem ser feitas, são elas:
+
+### Tampa
+O modelo para impressão se beneficiaria de formatos pensados para robustez em especial dos pontos de fixação das placas, mas também de espessura do topo e de margem para maior tolerância nos encaixes por conta das irregularidades da impressão.
+
+### Motor
+Ao unir o motor a haste e testar no becker com água, o giro da haste foi menor que o esperado, por conta isso acreditamos que um motor com um pouco mais de torqe e de velocidade se faz necessário.
+
+### Haste
+O calculo para a altura da haste foi equivocado com relação a altura final dos eletrodos fixados a tampa, na configuração testada a pá bateria nos eletrodos
+
+
 
 ## Referências
 
