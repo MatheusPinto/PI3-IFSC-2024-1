@@ -15,6 +15,16 @@ UserInfo = namedtuple(
 
 
 def create_user(email, password):
+    """Cria um usuário.
+
+    Args:
+        email: email do usuário.
+        password: senha do usuário
+
+    Returns:
+        O id único do usuário, a conexão e cursor com o banco de dados em casos de sucesso ou
+        None em todos parâmetros em caso de erro.
+    """
     try:
         conn, cursor = config.connect()
 
@@ -51,6 +61,19 @@ def create_user(email, password):
 
 
 def update_user(email, current_password, new_password1, new_password2, conn, cursor):
+    """Atualiza um usuário baseado em um email e uma senha
+
+    Args:
+        email: email do usuário.
+        current_password: senha atual do usuário
+        new_password1: senha do usuário a ser atualizada.
+        new_password2: confirmação da senha do usuário a ser atualizada.
+        conn: conexão utilizada para conectar no banco de dados.
+        cursor: cursor utilizado para conectar no banco de dados.
+
+    Returns:
+        Mensagem em caso de sucesso ou em casos de erro retorna None
+    """
     if new_password1 != new_password2:
         return "As senhas fornecidas não coincidem. Tente novamente"
 
@@ -94,6 +117,17 @@ from psycopg2 import sql
 
 
 def delete_user(email, password, conn, cursor):
+    """Remove um usuário baseado em um email e senha.
+
+    Args:
+        email: email do usuário.
+        password: senha do usuário
+        conn: conexão utilizada para conectar no banco de dados.
+        cursor: cursor utilizado para conectar no banco de dados.
+
+    Returns:
+        O usuário deletado em caso de sucesso ou None em caso de erro.
+    """
     try:
         delete_query = """
             DELETE FROM users
@@ -122,6 +156,15 @@ def delete_user(email, password, conn, cursor):
 
 
 def read_user(email, password):
+    """Busca um usuário baseado no email e senha fornecidos
+
+    Args:
+        email: email do usuário.
+        password: senha do usuário.
+
+    Returns:
+        O id único do usuário, a conexão e cursor com o banco de dados.
+    """
     try:
         conn, cursor = config.connect()
 
