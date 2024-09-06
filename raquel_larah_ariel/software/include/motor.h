@@ -9,9 +9,9 @@
 typedef enum
 {
     MOTOR_OFF = 0,
-    MOTOR_LOW = 50,
-    MOTOR_MED = 150,
-    MOTOR_HIG = 250,
+    MOTOR_LOW = 63,
+    MOTOR_MED = 89,
+    MOTOR_HIG = 114,
 } motorVelocityType;
 
 void motorInit();

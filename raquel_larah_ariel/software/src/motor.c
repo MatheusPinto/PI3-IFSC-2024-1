@@ -6,10 +6,11 @@ static uint8_t motorDuty;
 void motorInit()
 {
     MOTOR_DDRR |= MOTOR_MASK;
-    OCR2A = 255; // 16E6 / 255 / X = 1kHz
+	
     OCR2B = MOTOR_OFF;
-    TCCR2A = (1 << COM2B1) | (1 << COM2B0) | (1 << WGM21) | (1 << WGM20);
-    TCCR2B = (1 << CS22) | (1 << WGM22);
+    TCCR2A = (1 << COM2B1) | (1 << WGM20);
+    TCCR2B = (1 << CS20) | (1 << WGM22);
+	OCR2A = 255;
 }
 
 void motorEnable(void)

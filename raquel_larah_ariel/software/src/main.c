@@ -198,6 +198,8 @@ int main(void)
 		case MS_RUN:
 			if (buttonsOk())
 				main_state = MS_SELECT_OE;
+			if (timingTotalDone())
+				main_state = MS_SELECT_OE;
 			break;
 		case MAIN_STATE_LENGTH:
 		case MS_ERROR:
@@ -355,13 +357,15 @@ void ms_edit(void)
 {
 	buttonsDownBurst(1);
 	buttonsUpBurst(1);
+	if (vars.selected != VELOCITY)
+		motorDisable();
+	else
+		motorEnable();
+	
 	if (buttonsDown() == 0 && buttonsUp() == 0)
 		return;
 
-	if (vars.selected != VELOCITY)
-	{
-		motorDisable();
-	}
+
 
 	lcd_SendCmd(0xC0);
 	switch (vars.selected)
@@ -390,7 +394,6 @@ void ms_edit(void)
 		lcd_Write(timingTotalStr());
 		break;
 	case VELOCITY:
-		motorEnable();
 		if (buttonsUp())
 			motorInc();
 		if (buttonsDown())
@@ -495,6 +498,7 @@ void ms_error()
 		lcd_Write("THERMO_PULL");
 		break;
 	}
+	safeDefaults();
 	cli();
 	sleep_mode();
 }

@@ -160,9 +160,6 @@
     <Compile Include="include\motor.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\onewire.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="include\termometro.h">
       <SubType>compile</SubType>
     </Compile>
@@ -188,9 +185,6 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\motor.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\onewire.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\termometro.c">

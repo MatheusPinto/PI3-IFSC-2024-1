@@ -56,4 +56,5 @@ eletrodosStatusType eletrodosStatus(void)
         return ELETRODOS_POS;
     if (ELETRODOS_N_PORT & ELETRODOS_N_MASK)
         return ELETRODOS_NEG;
+	return ELETRODOS_OFF;
 }
