@@ -21,6 +21,7 @@ FoodInfo = namedtuple(
 
 
 def create_foods_table():
+    """Cria a tabela `foods` no banco de dados da AWS"""
     try:
         conn, cursor = config.connect()
 
@@ -66,6 +67,23 @@ def create_food(
     conn=None,
     cursor=None,
 ):
+    """Cria um alimento no banco de dados.
+
+    Args:
+        food_name: nome da comida.
+        variety: variedade do alimento.
+        protein_per_gram: quantidade de proteína por grama.
+        carbs_per_gram: quantidade de carboidratos por grama.
+        fats_per_gram: quantidade de gorduras por grama.
+        calories_per_gram: quantidade total de calorias por grama.
+        additional_info: Informações adicionais como por exemplo micronutrientes.
+                         Retorna por default {}.
+        conn: conexão utilizada para conectar no banco de dados.
+        cursor: cursor utilizado para conectar no banco de dados.
+
+    Returns:
+        A comida adicionada no banco de dados em caso de sucesso ou None em casos de erro.
+    """
     try:
         insert_query = """
         INSERT INTO foods (food_name, variety, protein_per_gram, carbs_per_gram, fats_per_gram, calories_per_gram, additional_info)
@@ -103,8 +121,18 @@ def create_food(
 
 
 def delete_food(food_name, variety, conn, cursor):
-    try:
+    """Deleta um alimento do banco de dados.
 
+    Args:
+        food_name: nome da comida.
+        variety: variedade do alimento.
+        conn: conexão utilizada para conectar no banco de dados.
+        cursor: cursor utilizado para conectar no banco de dados.
+
+    Returns:
+        A comida deletada do banco de dados em caso de sucesso ou None em casos de erro.
+    """
+    try:
         delete_query = """
         DELETE FROM foods
         WHERE food_name = %s AND variety = %s
@@ -141,6 +169,23 @@ def update_food(
     conn=None,
     cursor=None,
 ):
+    """Atualiza um alimento no banco de dados.
+
+    Args:
+        food_name: nome da comida.
+        variety: variedade do alimento.
+        protein_per_gram: quantidade de proteína por grama.
+        carbs_per_gram: quantidade de carboidratos por grama.
+        fats_per_gram: quantidade de gorduras por grama.
+        calories_per_gram: quantidade total de calorias por grama.
+        additional_info: Informações adicionais como por exemplo micronutrientes.
+                         Retorna por default {}.
+        conn: conexão utilizada para conectar no banco de dados.
+        cursor: cursor utilizado para conectar no banco de dados.
+
+    Returns:
+        A comida atualizada no banco de dados em caso de sucesso ou None em casos de erro.
+    """
     try:
         update_query = """
         UPDATE foods
@@ -184,6 +229,17 @@ def update_food(
 
 
 def read_food(food_name, variety, conn, cursor):
+    """Busca um alimento específico no banco de dados baseado no nome e variedade.
+
+    Args:
+        food_name: nome da comida.
+        variety: variedade do alimento.
+        conn: conexão utilizada para conectar no banco de dados.
+        cursor: cursor utilizado para conectar no banco de dados.
+
+    Returns:
+        O alimento encontrado em caso de sucesso ou None em caso de erro.
+    """
     try:
         select_query = """
         SELECT id, food_name, variety, protein_per_gram, carbs_per_gram, fats_per_gram, calories_per_gram, last_updated, additional_info
@@ -207,6 +263,16 @@ def read_food(food_name, variety, conn, cursor):
 
 
 def get_foods_by_name(food_name, conn, cursor):
+    """Busca alimentos no banco de dados baseado no nome.
+
+    Args:
+        food_name: nome da comida.
+        conn: conexão utilizada para conectar no banco de dados.
+        cursor: cursor utilizado para conectar no banco de dados.
+
+    Returns:
+        Os alimentos encontrados em caso de sucesso ou None em caso de erro.
+    """
     try:
         query = """
         SELECT * FROM foods
