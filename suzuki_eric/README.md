@@ -49,6 +49,15 @@ MicroPython é uma implementação enxuta da linguagem Python projetada para rod
 ### Amazon RDS
 O Amazon RDS (Relational Database Service) é um serviço gerenciado da AWS que facilita a configuração, operação e escalabilidade de bancos de dados relacionais na nuvem. O RDS automatiza tarefas como backup, atualização de software, escalabilidade de hardware e recuperação de falhas, permitindo que os usuários se concentrem na otimização de suas aplicações.
 
+#### Gerenciamento de Dependências
+
+Para facilitar a instalação e a configuração do ambiente de desenvolvimento, foi incluído no projeto um arquivo `requirements.txt`. Esse arquivo lista todas as bibliotecas necessárias para o funcionamento correto do sistema, permitindo a rápida instalação das dependências com um único comando:
+
+```bash
+pip install -r requirements.txt
+```
+O projeto foi testado em um ambiente macOS, e todas as dependências foram instaladas e verificadas nesse sistema operacional. Se você estiver utilizando outro sistema operacional, pode ser necessário realizar ajustes específicos ao ambiente, especialmente para bibliotecas como o OpenCV e o psycopg2.
+
 # Desenvolvimento e resultados
 
 ## Treinamento da Inteligência Artificial
