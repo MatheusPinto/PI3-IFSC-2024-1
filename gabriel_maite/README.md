@@ -45,3 +45,20 @@ O projeto consiste em utilizar um micrômetro para ajustar a distância até a s
 | Teste do sistema  | 19 a 26 - Junho | 
 | Teste do sistema  | 26 a 30 - Junho |
 | Apresentação  | 03 - Julho |
+
+### Telas do Aplicativo
+
+A primeira tela serve para realizar a configuração do Bluetooth. O celular deve estar pareado ao dispositivo "ESP32test" para realizar a medição. Clicando em "Configurações", o app abre a tela nativa do Bluetooth para que o usuário possa parear o dispositivo. 
+
+![](https://github.com/maiteluisaa/pi3/blob/main/figures/WhatsApp%20Image%202024-08-14%20at%2018.49.49.jpeg)
+
+Clicando em "Iniciar" é enviado um comando via Bluetooth para o ESP32 iniciar a medida, caso tenha algum erro ao enviar a mensagem, é apresentada uma mensagem de erro no rodapé da tela.
+
+![](https://github.com/maiteluisaa/pi3/blob/main/figures/WhatsApp%20Image%202024-08-14%20at%2018.49.50.jpeg)
+
+Caso a mensagem tenha sido enviada normalmente, o app fica esperando a resposta do ESP32 com os dados da medida. Quando o app recebe os dados é realizada a comparação da curva formada pelas medidas com a curva do datasheet, caso o erro percentual seja maior que 5%, o sensor precisa ser calibrado.
+
+![](https://github.com/maiteluisaa/pi3/blob/main/figures/WhatsApp%20Image%202024-08-14%20at%2019.02.09.jpeg)
+
+É possível exportar os dados das medidas para um arquivo csv e salvar numa pasta do dispositivo.
+

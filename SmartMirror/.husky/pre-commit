@@ -1,5 +1,0 @@
-#!/bin/sh
-
-if command -v npm &> /dev/null; then
-  npm run lint:staged
-fi

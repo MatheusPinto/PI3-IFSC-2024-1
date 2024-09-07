@@ -1,6 +1,21 @@
 # PI3-IFSC-2024-1
 
-Projeto de um dispositivo para auxilio de pessoas com visão debilitada
+Instituto Federal de Educação, Ciência e Tecnologia de Santa Catarina - Campus Florianópolis
+
+Departamento Acadêmico de Eletrônica
+
+Licenciatura em Engenharia Eletrônica
+
+_*Curso:*_ Projeto Integrador III
+
+__*Professores:*__
+
+* Robinson Pizzio e Matheus Leitze Pinto
+
+__*Estudantes:*__
+
+* Guido Locks Momm e Thais Silva Lisatchok
+
 
 Acesso rápido:
 

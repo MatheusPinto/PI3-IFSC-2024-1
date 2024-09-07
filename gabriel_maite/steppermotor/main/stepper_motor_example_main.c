@@ -88,16 +88,16 @@ void app_main(void)
 
     while (1) {
         // acceleration phase
-        tx_config.loop_count = 0;
-        ESP_ERROR_CHECK(rmt_transmit(motor_chan, accel_motor_encoder, &accel_samples, sizeof(accel_samples), &tx_config));
+        //tx_config.loop_count = 0;
+        //ESP_ERROR_CHECK(rmt_transmit(motor_chan, accel_motor_encoder, &accel_samples, sizeof(accel_samples), &tx_config));
 
         // uniform phase
         tx_config.loop_count = 5000;
         ESP_ERROR_CHECK(rmt_transmit(motor_chan, uniform_motor_encoder, &uniform_speed_hz, sizeof(uniform_speed_hz), &tx_config));
 
         // deceleration phase
-        tx_config.loop_count = 0;
-        ESP_ERROR_CHECK(rmt_transmit(motor_chan, decel_motor_encoder, &decel_samples, sizeof(decel_samples), &tx_config));
+        //tx_config.loop_count = 0;
+        //ESP_ERROR_CHECK(rmt_transmit(motor_chan, decel_motor_encoder, &decel_samples, sizeof(decel_samples), &tx_config));
         // wait all transactions finished
         ESP_ERROR_CHECK(rmt_tx_wait_all_done(motor_chan, -1));
 
