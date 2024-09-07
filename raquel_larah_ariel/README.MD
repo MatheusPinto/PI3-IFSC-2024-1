@@ -156,7 +156,10 @@ Pensando em atender todas as necessidades do processo foi feito o seguinte diagr
 
 
 ### Videos
+Apresentação da interface do usuário, demonstrando definição da temperatura, velocidade do motor, e intervalo entre as trocas de polaridade.
 https://github.com/ArielRM/PI3-IFSC-2024-1/blob/main/raquel_larah_ariel/assets/interface_usuario_480p.mp4
+
+Demonstração da atuação do limitador sendo acionado.
 https://github.com/ArielRM/PI3-IFSC-2024-1/blob/main/raquel_larah_ariel/assets/corrente_e_limitador.mp4
 
 
@@ -189,11 +192,11 @@ O modelo para impressão se beneficiaria de formatos pensados para robustez, em 
 
 
 ### Eletrodo
-O conector para segurar os eletrodos poderia ser de mais fácil encaixe.
+O conector para segurar os eletrodos poderia ser de mais fácil encaixe. A altura dos eletrodos teve de ser modificada para operar com as pás sem colisões.
 
 
-### Motor
-Ao unir o motor a haste e testar no becker com água, o giro da haste foi menor que o esperado, por conta disso acreditamos que um motor com um pouco mais de torque e de velocidade se faz necessário.
+### Pás
+Ao unir o motor a haste e testar no becker com água, o giro da haste foi menor que o esperado, por conta disso modificamos o tamanho das pás e o material base e assim foi obtido um melhor resultado. 
 
 
 
