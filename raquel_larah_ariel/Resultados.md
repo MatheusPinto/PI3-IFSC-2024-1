@@ -22,10 +22,12 @@ Esse processo levou em torno de 7 minutos. Após desligado o ebulidor ambas as t
 ## Teste do motor DC (13100 RPM DC MOTOR)
 Fizemos alguns testes para observar quais valores de pwm seriam bons de trabalhar. Os testes que fizemos foram feitos em 5V sem cuidado com a corrente o que causou a queima do motor. Defimos que deveriamos planejar uma limitação da corrente utilizando o proprio pwm, porem deveriamos esperar ate conhecermos melhor a carga do motor (haste + helice + água) para definiraos qual seria o valor limite.
 
-||
-|:-:|
-|![Motor](./assets/motor_teste_5V.jpg)|
-|<a id="fig-motor_teste_5V">**Figura 3** - Teste do motor </a>|
+|||
+|:-:|:-:|
+|![Motor](./assets/motor_teste_5V.jpeg)|![Motor](./assets/motor_teste_5V_2.jpeg)|
+|<a id="fig-motor_teste_5V">**Figura 3** - Teste do motor </a>|<a id="fig-motor_teste_5V_2">**Figura 4** - Teste do motor 2 </a>|
+
+
 
 ## Teste de fonte de corrente + ponte-H
 Testamos a integração entre a fonte de corrente utilizando o LM317 e a ponte H L293N da mesma forma que pretendemos utiliza-las no nosso sistema. Obtivemos os seguintes resuldados de corrente na carga e na entrada do bloco para o sentido positivo de corrente na ponte-H:
