@@ -177,7 +177,8 @@ Diferente dos testes realizados a corrente demorou consideravelmente para alcan�
 
 ### Apresentação do produto
 Tivemos dificuldade para encontrar conectores entre as duas tampas, decidimos utilizar um plug de tomada para o ebulidor e um p2 no sensor.
-![](./assets/Coneccao_tampas.jpg)
+
+![](./assets/Coneccao_tampas.jpeg)
 
 
 As tampas foram impressas, a tampa de baixo encaixou bem nos dois beckers a de cima precisaria de ajustes para acomodar melhor os componentes. Além disso, a disposição das conexões entre placas poderia ter sido melhor pensada já que encontramos durante a montagem como quebra de fio e de trilha que nós forçou a refazer as placas.
