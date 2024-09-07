@@ -70,62 +70,38 @@ O Espelho Inteligente deve ser capaz de funcionar tanto como um espelho tradicio
 
 ## 3. Lista de Componentes
 
-*   Raspberry Pi 4 Model B 
-	 * Conectividade Wi-Fi Integrada
-	 * Saída de vídeo HDMI integrada
-	 * Capacidades de Comunicação IO - leitura de sensores
-     * Rapberry OS
-     * Custo aproximado: R$250
-     
-     ### Raspberry Pi 4 Model B
-![Raspberry Pi 4 Model B](https://www.pi-shop.ch/media/catalog/product/cache/1/image/650x/040ec09b1e35df139433887a97daa66f/t/h/thumbnail_10__2.jpg )
+### Componentes de Hardware Utilizados
 
- *   Monitor Dell de 27" - P2722H
-	 * Resolução: 1920 x 1080 a 60 Hz
-	 * Entrada de vídeo HDMI integrada
-	 * Escolhido devido a disponibilidade, ja possuiamos o monitor. Para um produto final este precisaria ser revisado para reduzir o custo de projeto.
-     * Custo aproximado: R$xxxxxxx
-     
-     ### Monitor Dell de 27" - P2722H
-<img src="images/Monitor.JPG" align="center" alt="Monitor">   
+| Componente | Descrição | Imagem | Custo Aproximado |
+|------------|-----------|--------|------------------|
+| **Raspberry Pi 4 Model B** |- O "cérebro" do projeto Mirror, responsável por executar o sistema operacional e o software Magic Mirror, gerenciando todas as funcionalidades.<br> - Conectividade Wi-Fi integrada<br>- Saída de vídeo HDMI integrada<br>- Capacidades de comunicação IO<br>- Sistema operacional: Raspberry Pi OS | ![Raspberry Pi 4 Model B](https://www.pi-shop.ch/media/catalog/product/cache/1/image/650x/040ec09b1e35df139433887a97daa66f/t/h/thumbnail_10__2.jpg) | R$ 580,00 |
+| **Monitor Dell de 27" - P2722H** | - Utilizado como tela do espelho, exibe todas as informações do projeto, como clima, notícias e outras funcionalidades configuradas.<br>- Resolução de 1920 x 1080 a 60 Hz<br>- Entrada de vídeo HDMI integrada<br>- Escolhido pela disponibilidade, deve ser revisado em um produto final para reduzir custos | ![Monitor Dell de 27"](images/Monitor.JPG) | R$ 1399,00 |
+| **Moldura de Madeira** | - Estrutura de suporte e fixação para o conjunto<br>- Adaptada às dimensões do monitor e vidro | ![Moldura de Madeira](images/Moldura.JPG) | R$ 50,00 |
+| **Vidro para Espelho Inteligente** | - Dimensão ajustada para cobrir a tela do monitor<br>- Espessura específica para garantir resistência e efeito de espelho | ![Vidro](images/Vidro.JPG) | R$ 25,00 |
+| **Película Reflectiva (50x100 cm)** | - Cria o efeito espelhado quando a tela não está ligada<br>- Essencial para transformar o monitor em um espelho interativo | ![Película Reflectiva](images/pelicula.JPG) | R$ 16,91 |
+| **Sensor de Gestos GY-PAJ7620U2** | - Detecta movimentos das mãos para controle sem toque<br>- Escolhido após testes com outros sensores | ![Sensor de Gestos](images/sensor.JPG) | R$ 27,00 |
+| **JBL (Caixa de Som)** | - Utilizada para saída de áudio dos módulos interativos<br>- Aumenta a interatividade e imersão do usuário | ![JBL Caixa de Som](images/jbl.jpg) | R$ 165,00 |
 
- *   Moldura de Madeira
-	 * Fixar e dar estrutura ao conjunto.
-   * Dimensão
-     * Custo aproximado: R$xxxxxxx
-     
-     ### Moldura de madeira
-<img src="images/Moldura.JPG" align="center" alt="Moldura">
+### Componentes de Hardware Considerados (Não Utilizados)
 
- *   Vidro
-	 * Dimensão 
-	 * Espessura
-     * Custo aproximado: R$xxxxxxx
-     
-     ### Vidro
-<img src="images/Vidro.JPG" align="center" alt="Vidro">
+| Componente | Descrição | Imagem | Motivo de Descarte | Custo Aproximado |
+|------------|-----------|--------|--------------------|------------------|
+| **Moldura Touch Screen** | - Facilitaria a interação direta com o espelho através de toques<br>- Permite um controle intuitivo do sistema | ![Moldura Touch Screen](images/moldura-touch.png) | Alto custo e complexidade na instalação e integração com o sistema | R$ 500,00 |
+| **Sensor PIR** | - Utilizado para detectar presença humana e ajustar o brilho da tela ou ligar/desligar automaticamente<br>- Poderia aumentar a economia de energia<<br> - Poderíamos tirar a função de detecção do sensor de gestos | ![Sensor PIR](images/pir.png) | Tempo de implementação | R$ 30,00 |
+| **LEDs para Iluminação** | - LEDs integrados ao redor da moldura para iluminação adicional<br>- Poderia fornecer luz ambiente ou notificações visuais | ![LEDs](images/led.png) | Custo de instalação e necessidade de integração com o sistema | R$ 30,00 |
+| **Acrílico Especial para Reflexão** | - Acrílico com transparência e reflexividade específicas para melhor efeito de espelho<br>- Alternativa ao vidro comum para maior leveza, resistência e visibilidade. | ![Acrílico Reflexivo](images/acrilico.png) | Difícil de encontrar no mercado local e custo elevado | R$ 350,00 |
+| **Raspberry Pi Camera Module** | - Câmera integrada para reconhecimento facial ou videoconferência<br>- Poderia ser usada para segurança ou interação avançada e interação com perfil e detecção do cliente. | ![Raspberry Pi Camera](images/rasp-cam.jpg) | Complexidade na implementação e preço elevado | R$ 250,00 |
+| **Sensor de Temperatura e Umidade DHT** | - Permite medir e exibir a temperatura e umidade interna<br>- Integração com módulos de clima para uma experiência personalizada | ![Sensor DHT](images/dht.jpg) | Tempo necessário para integração | R$ 20,00 |
 
- *   Película Reflectiva, Proteção de Privacidade, Vidro Adesivos, 50x100cm
-	 * Criar efeito espelhado quando a tela não estiver ligada.s
-     * Custo aproximado: R$ 16,91
-     
-     ### Película espelhada
-<img src="images/pelicula.JPG" align="center" alt="Pelicula">
+### Ferramentas Utilizadas
 
- *   Sensor de gestos
-	 * Modelo: GY-PAJ2620
-	 * Capacidade de interagir com sistema utiizando gestos padronizados
-     * Custo aproximado: R$ 27,82
-     
-     ### Sensor de gestos
-<img src="images/sensor.JPG" align="center" alt="Sensor de gestos">
-
- *   ~~Moldura touch screem~~
-	 * ~~Facilidade de interagir com sistema~~
-     * ~~Custo aproximado:~~ R$ 500,00, descartado neste momento devido ao custo ele
-     
-     ### ~~Moldura touch screem~~
-<img src="images/Touch.JPG" align="center" alt="Moldura touch screem">
+| Ferramenta | Descrição |
+|------------|-----------|
+| **Chave de Fenda e Martelo** | Utilizadas para montagem e fixação da moldura de madeira |
+| **Cola de Madeira e Fita Isolante** | Para acabamento e segurança das conexões |
+| **Serra Manual/Elétrica** | Necessária para cortar a madeira nas dimensões corretas |
+| **Papel de Acabamento e Lixa** | Para dar acabamento estético e suavizar a madeira |
+| **Pregos e Parafusos** | Para fixação da estrutura e montagem final |
 
 ## 4. Montagem do Hardware
 
