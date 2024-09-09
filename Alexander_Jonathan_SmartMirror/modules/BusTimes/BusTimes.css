@@ -1,0 +1,38 @@
+/* BusTimes.css */
+
+.bus-info {
+  color: var(--color-text);
+  font-family: var(--font-primary);
+  font-size: var(--font-size-small);
+  background: var(--color-background);
+  padding: 10px;
+  border: 1px solid var(--color-text-dimmed);
+  border-radius: 5px;
+  margin-bottom: var(--gap-modules);
+  width: 350px;
+}
+
+.bus-info h2 {
+  font-size: var(--font-size-medium);
+  margin: 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--color-text-dimmed);
+}
+
+.bus-info div {
+  margin: 5px 0;
+}
+
+.bus-info .loading {
+  font-size: var(--font-size-small);
+  color: var(--color-text-dimmed);
+  text-align: center;
+  padding: 20px;
+}
+
+/* Ajustes de alinhamento e espaçamento */
+.region.top.right .bus-info {
+  text-align: left;
+  margin: 0;
+  padding: 10px;
+}

@@ -1,0 +1,10 @@
+[
+  {
+      "USERNAME": "jonathanbonette",
+      "CLIENT_ID": "e37ccfb799114126bca264a97abd364b",
+      "CLIENT_SECRET": "0d0c2cdb8ddc4b639d794c18523b99d7",
+      "TOKEN": "./jonathanbonette_token.json",
+      "AUTH_DOMAIN": "http://192.168.0.17",
+      "AUTH_PORT": "8888"
+  }
+]

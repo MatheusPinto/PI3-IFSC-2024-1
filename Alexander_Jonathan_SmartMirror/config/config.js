@@ -23,8 +23,22 @@ let config = {
 	timeFormat: 24,
 	units: "metric",
 
+	// ******************** TEST YT WEB VIEW
+	electronOptions: {
+		webPreferences: {
+			webviewTag: true,
+			contextIsolation: false,
+			enableRemoteModule: true
+		},
+	},
+
+
 	modules: [
-		//// ****************************************** keybindings module ********************************************
+
+		// **************************************************************************************** BEGIN
+
+		// **************************************************************************************** INACTIVE: key bindings module
+
 		//{	
 			//module: 'KeyBindings',
 			//config: {
@@ -32,16 +46,18 @@ let config = {
 				//enableKeyboard: true,
 			//}
 		//},
-		// ******************************************** carousel module ********************************************
+
+		// **************************************************************************************** INACTIVE: carousel module
+
 		//{
 		  //module: "Carousel",
 		  //position: "bottom_bar", 					// Required only for navigation controls
 		  //config: {
-			//transitionInterval: 0, 					// passing 0 with mode:"slides" will disable the timer for manual navigation
-			//showPageIndicators: true, 				// a boolean true or false to show or hide the page indication 'bubbles' at the bottom of the screen
-			//showPageControls: true, 				// a boolean true or false to show or hide the next and previous page buttons
-			//ignoreModules: ["clock", "alert"], 		// a list of module names whom should not be considered as part of the carousel
-			//mode: "slides", 						// groups of modules can be assigned to be displayed at the same time
+			//transitionInterval: 0, 					
+			//showPageIndicators: true, 				
+			//showPageControls: true, 				
+			//ignoreModules: ["clock", "alert"], 		
+			//mode: "slides", 						
 			//slides: {
 			  //main: [								// home carousel page
 				//"calendar",
@@ -69,33 +85,41 @@ let config = {
 			//}
 		  //}
 		//},
-		// ******************************************** alert module ********************************************
+
+		// **************************************************************************************** INACTIVE: alert module
+
 		{
 			module: "alert",
 		},
-		// ************************************* update notification module ********************************************
+
+		// **************************************************************************************** INACTIVE: update notification module
+
 		//{
 			//module: "updatenotification",
 			//position: "top_bar"
 		//},
-		// ************************************* learning module ********************************************
+
+		// **************************************************************************************** FOURTH PAGE TESTING BROKEN: magic learning module
+
 		{
 			module: "MagicLearning",
-			position: "top_bar"
+			position: "bottom_bar"
 		},
-		// ****************************************** gesture module ********************************************		
+
+		// **************************************************************************************** FIXED: grove gestures module
+		
 		{
 		module: "GroveGestures",
 		position: "top_bar",
 		config: {
-			autoStart: true, 			//When Mirror starts, recognition will start.
-			verbose:true, 				// If set as `true`, useful messages will be logged.
-			recognitionTimeout: 1000, 	//Gesture sequence will be ended after this time from last recognized gesture.
+			autoStart: true, 			// When Mirror starts, recognition will start.
+			verbose:true, 				
+			recognitionTimeout: 1000, 	// Gesture sequence will be ended after this time from last recognized gesture.
 			
 			pythonPath: "/usr/bin/python",
 			
 			// set idle time to hide all modules
-			idleTimer: 10000, //*60*30, // `0` for disable, After this time from last gesture, onIdle will be executed.
+			idleTimer: 100000, //*60*30, // `0` for disable, After this time from last gesture, onIdle will be executed.
 			onIdle: { // See command section
 				moduleExec: {
 					module: [],
@@ -109,7 +133,7 @@ let config = {
 			notificationExec: {
 				notification: "GESTURE_DETECTED",
 				},
-				// You can make Mirror to wake up the modules which were hidden by onIdle with any gestures.
+				// wake up the modules which were hidden by onIdle with any gestures.
 				moduleExec: {
 					module: [],
 					exec: (module) => {
@@ -153,62 +177,73 @@ let config = {
 				},
 			}
 		},
-		// *************************************** pages module ********************************************
+
+		// **************************************************************************************** FIXED: pages module
+
 		{
 		module: "pages",
 		config: {
 			rotationTime: 1800000,
 			modules: [
 				[
-					"calendar",				// top_left
-					"compliments",			// lower_third
-					"weather",				// top_right
-					"newsfeed"				// bottom_bar
+					"CalendarExt3Agenda", 		// left
+					"compliments",				// bottom_bar
 				],
 				[
-					"Formula1",			// top_left
-					"CalendarExt3Agenda", // top_right
-					"compliments",			// lower_third
+					"Formula1",					// left
+					"MplayerRadio",				// bottom_left
+					"newsfeed",					// bottom_bar
 				],
 				[
-					"weather",				// top_right
-					"Spotify",
-					"systemtemperature"
+					"SmartWebDisplay",			// left
+					"systemtemperature",		// bottom_left
+					"network-signal",			// bottom_left
+				],
+				[
+					"Spotify",					// left
+					// "MagicLearning",			// bottom_bar
+					"YouTubeWebView",			// bottom_left
+					"BusTimes",					// top_right
 				]
 			],
-			fixed: [
-					"clock",				// top_bar
-					"network-signal",	// bottom_right
-					"page-indicator", 	// bottom_bar
-					
-					"MagicLearning"		// test
-			]
+			fixed:  [
+					"clock",					// top_left
+					"page-indicator", 			// bottom_bar
+				]
 			} 	
 		},
-		// ************************************** pages indicator module ********************************************
+
+		// **************************************************************************************** FIXED: pages indicator module
+
 		{
-		module: 'page-indicator',
-		position: 'bottom_bar',
-		config: {
-			pages: 3,
-			}
+			module: 'page-indicator',
+			position: 'bottom_bar',
+			config: {
+				pages: 3,
+				}
 		},
-		// *************************************** gesture simple module ********************************************
+
+		// **************************************************************************************** INACTIVE: gesture simple module
+
 		//{
 			//module: "GroveGestures",
 			//position: "top_bar",
 			//config: {}
 		//},
-		// ******************************************** clock module ********************************************
+
+		// **************************************************************************************** FIXED: clock module
+
 		{
 			module: "clock",
-			position: "top_bar"
+			position: "top_left"
 		},
-		// ******************************************** calendar module ********************************************
+
+		// **************************************************************************************** INACTIVE: simple calendar module
+
 		{
 			module: "calendar",
 			header: "Proximos Eventos",
-			position: "top_left",
+			position: "left",
 			config: {
 				calendars: [
 					{
@@ -231,46 +266,48 @@ let config = {
 				]
 			}
 		},
-		// ****************************************** network signal module ********************************************
-		{
-		module: "network-signal",
-		position: "bottom_right",
-		config: {
-			animationSpeed: 100,
-			showMessage: false
-			}
-		},
-		// ******************************************* compliments module ********************************************
+
+		// **************************************************************************************** FIRST PAGE: compliments module
+
 		{
 			module: "compliments",
-			position: "lower_third"
+			position: "bottom_bar",
+			config: {
+				classes: "thin bright"
+			}
 		},
-		// ******************************************** weather module ********************************************
+
+		// **************************************************************************************** FIRST PAGE: weather module
+
 		{
 			module: "weather",
-			position: "top_right",
+			position: "bottom_left",
 			config: {
 				weatherProvider: "openweathermap",
 				type: "current",
 				location: "Florianópolis",
 				locationID: "3463237", //ID from http://bulk.openweathermap.org/sample/city.list.json.gz;
-				apiKey: "API_KEY"
+				apiKey: "3892217fdda3dac276b2a4919e818839"
 			}
 		},
-		// ******************************************* forecast module ********************************************
+
+		// **************************************************************************************** FIRST PAGE: forecast module
+
 		{
 			module: "weather",
-			position: "top_right",
+			position: "bottom_left",
 			header: "Previsão do Tempo",
 			config: {
 				weatherProvider: "openweathermap",
 				type: "forecast",
 				location: "Florianópolis",
 				locationID: "3463237", //ID from http://bulk.openweathermap.org/sample/city.list.json.gz;
-				apiKey: "API_KEY"
+				apiKey: "3892217fdda3dac276b2a4919e818839"
 			}
 		},
-		// ******************************************* newsfeed module ********************************************
+
+		// **************************************************************************************** SECOND PAGE: newsfeed module
+
 		{
 			module: "newsfeed",
 			position: "bottom_bar",
@@ -295,10 +332,12 @@ let config = {
 				broadcastNewsUpdates: true
 			}
 		},
-		// ****************************************** formula 1 module ********************************************
+
+		// **************************************************************************************** SECOND PAGE: f1 module
+
 		{
 			module: "Formula1",
-			position: "top_left",
+			position: "left",
 			header: "Formula 1",
 			config: {
 					showStanding: "BOTH",
@@ -308,14 +347,17 @@ let config = {
 					// showNextRace: true
 			}
 		},
-		// ******************************************* agenda module ********************************************
+
+		// **************************************************************************************** FIRST PAGE: agenda module
+
 		//{
 			//module: "CalendarExt3Agenda",
 			//position: "top_right",
 		//},
+
 		{
 			module: "CalendarExt3Agenda",
-			position: "top_right",
+			position: "left",
 			title: "Agenda",
 			config: {
 				instanceId: "basicCalendar",
@@ -326,23 +368,149 @@ let config = {
 				calendarSet: [],
 			}
 		},
-		// ******************************************* spotify module ********************************************
+
+		// **************************************************************************************** FOURTH PAGE: spotify module
+
 		{
 			module: "Spotify",
-			position: "bottom_left",
+			position: "left",
 			config: {
 					debug: false,
 				}
 		},
-		// ******************************************* system temperature module ********************************************
+
+		// **************************************************************************************** THIRD PAGE: system temperature module
+
 		{
 			module: 'systemtemperature',
-			position: 'top_center',
+			position: 'bottom_left',
 			classes: 'small dimmed',
 			config: {
 				prependString: "Temperatura do Sistema"
 			}
-		}
+		},
+
+		// **************************************************************************************** THIRD PAGE: network signal module
+
+		{
+			module: "network-signal",
+			position: "bottom_left",
+			config: {
+				animationSpeed: 100,
+				showMessage: false
+				}
+		},
+
+		// **************************************************************************************** THIRD PAGE: cams module
+
+		{
+			module: 'SmartWebDisplay', // first cam
+			position: 'left',
+			config: {
+				logDebug: false,
+				height:"100%",
+				width:"100%",
+				updateInterval: 0,
+				NextURLInterval: 0,
+				displayLastUpdate: false,
+				displayLastUpdateFormat: 'ddd - HH:mm:ss',
+				url: ["https://video.nest.com/embedded/live/rsStd5iVLE?autoplay=1"],
+				scrolling: "no",
+				shutoffDelay: 10000 
+			}
+		},
+		{
+			    module: 'SmartWebDisplay', // second cam
+			    position: 'left', // same pos
+			    config: {
+				logDebug: false,
+				height: "50%", 
+				width: "100%",
+				updateInterval: 0,
+				NextURLInterval: 0,
+				displayLastUpdate: false,
+				displayLastUpdateFormat: 'ddd - HH:mm:ss',
+				url: ["https://video.nest.com/embedded/live/wSbs3mRsOF?autoplay=1"],
+				scrolling: "no",
+				shutoffDelay: 10000 
+			    }
+		},
+		{
+			    module: 'SmartWebDisplay', // third cam
+			    position: 'left', // same pos
+			    config: {
+				logDebug: false,
+				height: "50%", 
+				width: "100%", 
+				updateInterval: 0,
+				NextURLInterval: 0,
+				displayLastUpdate: false,
+				displayLastUpdateFormat: 'ddd - HH:mm:ss',
+				url: ["https://video.nest.com/embedded/live/rsStd5iVLE?autoplay=1"], 
+				scrolling: "no",
+				shutoffDelay: 10000 
+			    }
+		},
+
+		// **************************************************************************************** SECOND PAGE: radio module
+
+		{
+			module: "MplayerRadio",
+			// header: "Radio",
+			position: "bottom_left",
+			config: {
+				// customCommand: "modules/MplayerRadio/scripts/vlcWrapper.bash",
+				// customCommandArgs: ["###URL###"],
+				showControls: false,
+				showTitles: true,
+				stopOnSuspend: true,
+				// autoplay: 0,
+				stations: [
+					{
+						title: "Antena 1",
+						url: "https://www.surfmusik.de/m3u/antena-1,579.m3u",
+						logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Antena_1_blue_logo.png/800px-Antena_1_blue_logo.png?20200302000853",
+					}
+				],
+			},
+		},
+
+		// **************************************************************************************** FOURTH PAGE: yt module		
+
+		{
+			module: 'YouTubeWebView',
+			position: 'left', 
+			config: {
+				
+				video_id: "gmW4TqOybzA", // IDs
+				video_list: [
+					"CtVyl402W5s", 
+					"wmUVy43tqw4",
+					"J_TxPQKcG7w", 
+					"avWZsKyuRVE",
+					"IpkIGGJMHBA", 
+					"B9zgwx6mhrk",
+					"6KvTDeHlIfI"
+					],
+				autoplay: false,
+				controls: false,
+				loop: true,
+				modestbranding: true,
+				width: "400px",
+				height: "225px",
+				referrer: "http://your.public.domain.org",
+				},
+		},
+
+		// **************************************************************************************** FOURTH PAGE: fpolis bus times module
+
+		{
+			module: "BusTimes",
+			position: "top_right",
+		},
+
+
+		// **************************************************************************************** END
 	]
 };
 
