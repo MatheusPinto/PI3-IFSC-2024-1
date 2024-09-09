@@ -1,0 +1,3 @@
+../Core/Src/motor.c:10:6:motor_init	16	static
+../Core/Src/motor.c:15:6:motor_speed	24	static
+../Core/Src/motor.c:25:6:motor_pulse	24	static
