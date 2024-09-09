@@ -379,8 +379,70 @@ Com essas melhorias e novas funcionalidades, o projeto se tornará não apenas u
 
 ## 9. Conclusão
 
-~~Dificuldades Encontradas:~~
+O projeto do Espelho Inteligente representou uma oportunidade valiosa para aplicar conceitos teóricos em uma solução prática e inovadora, transformando um espelho comum em um dispositivo interativo e multifuncional. Desde o início, nosso objetivo era criar um sistema integrado capaz de oferecer informações relevantes de forma acessível e atraente, e, através dos desafios enfrentados, alcançamos um resultado satisfatório. Conseguimos implementar diversas funcionalidades úteis nas diferentes telas do Espelho Inteligente, como módulos de hora, calendário, notícias, segurança e entretenimento. Embora tenhamos enfrentado dificuldades, como a integração complexa dos sensores de movimento, limitações de hardware e desafios de configuração de bibliotecas, conseguimos superar essas barreiras através de pesquisa contínua, testes rigorosos e ajustes precisos. Cada obstáculo superado trouxe novos aprendizados, que enriquecem nossa compreensão das tecnologias utilizadas. Em resumo, o projeto não só atingiu suas metas iniciais, como também abriu portas para novas oportunidades e ideias, reafirmando a importância da curiosidade, persistência e criatividade no desenvolvimento de soluções tecnológicas. **O Espelho Inteligente não é apenas um reflexo da imagem do usuário, mas também um reflexo do potencial ilimitado da inovação quando combinada com dedicação e aprendizado constante**.
+
 
 ## 10. Referências
 
-~~Dificuldades Encontradas:~~
+Durante o desenvolvimento deste projeto, diversas fontes foram consultadas para a pesquisa, implementação e solução de problemas relacionados ao projeto e seus componentes. A seguir, listamos as principais referências utilizadas:
+
+1. **Raspberry Pi Documentation**  
+   Documentação oficial do Raspberry Pi para instalação e configuração do sistema operacional e integração de hardware.  
+   Disponível em: [Raspberry Pi Documentation](https://www.raspberrypi.org/documentation/)
+
+2. **Adafruit Learning System**  
+   Tutoriais e guias sobre sensores de movimento e outros componentes eletrônicos.  
+   Disponível em: [Adafruit](https://learn.adafruit.com/)
+
+3. **Stack Overflow**  
+   Fórum de discussão utilizado para solucionar problemas específicos de programação e configuração durante o desenvolvimento.  
+   Disponível em: [Stack Overflow](https://stackoverflow.com/)
+
+4. **Instructables**  
+   Guias e projetos de inspiração para construção de espelhos inteligentes e integração de hardware.  
+   Disponível em: [Instructables](https://www.instructables.com/)
+
+5. **Datasheet PAJ7620U2 Gesture Sensor**  
+   Documento técnico oficial do sensor de gestos utilizado no projeto, com informações detalhadas sobre suas funcionalidades e configuração.  
+   Disponível em: [PAJ7620U2 Datasheet](https://cdn.sparkfun.com/datasheets/Sensors/Proximity/paj7620u2.pdf)
+
+6. **Datasheet APDS-9960 Gesture Sensor**  
+   Documento técnico sobre o sensor de gestos APDS-9960, utilizado durante os testes iniciais do projeto.  
+   Disponível em: [APDS-9960 Datasheet](https://cdn.sparkfun.com/datasheets/Sensors/Proximity/APDS-9960.pdf)
+
+7. **Datasheet GP2Y0A21 Distance Sensor**  
+   Documento técnico sobre o sensor de distância GP2Y0A21, utilizado em fases iniciais do projeto.  
+   Disponível em: [GP2Y0A21 Datasheet](https://www.pololu.com/file/download/gp2y0a21yk.pdf?file_id=0J85)
+
+8. **Fóruns de Tecnologia e IoT**  
+    Vários fóruns especializados em tecnologia e Internet das Coisas (IoT) foram consultados para obtenção de dicas e soluções de problemas específicos. Exemplos incluem Raspberry Pi Forums, Reddit IoT Community, e o Arduino Forum.
+
+9. **Arduino Gesture Recogniser**  
+    Repositório no GitHub com código e documentação para reconhecimento de gestos usando Arduino.  
+    Disponível em: [Arduino Gesture Recogniser](https://github.com/playfultechnology/arduino-gesture-recogniser)
+
+10. **Pinout.xyz**  
+    Site que detalha o pinout do Raspberry Pi, útil para conexões de hardware.  
+    Disponível em: [Pinout.xyz](https://pinout.xyz)
+
+11. **Seeed Studio - Grove Gesture PAJ7620U2**  
+    Página do produto PAJ7620U2 com especificações e documentação.  
+    Disponível em: [Seeed Studio](https://www.seeedstudio.com/Grove-Gesture-PAJ7620U2.html)
+
+12. **UTFPR Repositório Institucional**  
+    Documento acadêmico com fundamentos teóricos e aplicações de espelhos inteligentes.  
+    Disponível em: [UTFPR Repositório](https://riut.utfpr.edu.br/jspui/bitstream/1/20154/3/LD_WEB_III_2016_09.pdf)
+
+13. **Smart Builds**  
+    Blog com tutoriais sobre construção de espelhos inteligentes e projetos DIY.  
+    Disponível em: [Smart Builds](https://smartbuilds.io)
+
+14. **SurtrTech - Hand Gestures with Arduino**  
+    Tutorial detalhado para adicionar gestos manuais a projetos Arduino.  
+    Disponível em: [SurtrTech](https://surtrtech.com/2019/07/16/how-to-add-hand-gestures-to-your-arduino-projects/)
+
+15. **Running the Code on a Raspberry Pi**  
+    Documentação de como executar um módulo visual no Raspberry Pi, com instruções para instalação e configuração.  
+    Disponível em: [*Running RPi](https://magic-mirror.readthedocs.io/en/latest/#)
+
+Essas fontes foram essenciais para o desenvolvimento do projeto, oferecendo guias, inspiração e soluções para os desafios enfrentados durante a implementação do Magic Mirror.
