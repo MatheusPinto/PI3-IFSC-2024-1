@@ -1,36 +1,33 @@
 #ifndef BUTTONS_H_INCLUDED
 #define BUTTONS_H_INCLUDED
 
+#include <avr/io.h>
 #include <stdint.h>
-#include "main.h"
 
-#define BUTTONS_UP_PORT PORTC
-#define BUTTONS_UP_DDR DDRC
-#define BUTTONS_UP_PINR PINC
-#define BUTTONS_UP_PCMSK PCMSK1
-#define BUTTONS_UP_PCICR_MASK (1 << PCIE1)
-#define BUTTONS_UP_MASK (1 << PINC0)
+#define BUTTONS_OK_PORT PORTD
+#define BUTTONS_OK_DDR DDRD
+#define BUTTONS_OK_PINR PIND
+#define BUTTONS_OK_MASK (1 << PIND5)
 
-#define BUTTONS_DW_PORT PORTC
-#define BUTTONS_DW_DDR DDRC
-#define BUTTONS_DW_PINR PINC
-#define BUTTONS_DW_PCMSK PCMSK1
-#define BUTTONS_DW_PCICR_MASK (1 << PCIE1)
-#define BUTTONS_DW_MASK (1 << PINC1)
+#define BUTTONS_DOWN_PORT PORTD
+#define BUTTONS_DOWN_DDR DDRD
+#define BUTTONS_DOWN_PINR PIND
+#define BUTTONS_DOWN_MASK (1 << PIND6)
 
-#define BUTTONS_OK_PORT PORTC
-#define BUTTONS_OK_DDR DDRC
-#define BUTTONS_OK_PINR PINC
-#define BUTTONS_OK_PCMSK PCMSK1
-#define BUTTONS_OK_PCICR_MASK (1 << PCIE1)
-#define BUTTONS_OK_MASK (1 << PINC2)
+#define BUTTONS_UP_PORT PORTD
+#define BUTTONS_UP_DDR DDRD
+#define BUTTONS_UP_PINR PIND
+#define BUTTONS_UP_MASK (1 << PIND7)
 
-#define BUTTONS_HOLD_TIME_MS 2000
-#define BUTTONS_BURST_TIME_MS 1000
+#define BUTTONS_HOLD_TIME_MS 1000
+#define BUTTONS_BURST_TIME_MS 500
 
-void buttons_Init();
-uint8_t buttons_StateCall(fsm_handleType *);
-uint8_t buttons_StateNext(fsm_handleType *);
-
+void buttonsInit();
+void buttonsUpdate();
+uint8_t buttonsUp();
+uint8_t buttonsDown();
+uint8_t buttonsOk();
+void buttonsDownBurst(uint8_t flag);
+void buttonsUpBurst(uint8_t flag);
 
 #endif
