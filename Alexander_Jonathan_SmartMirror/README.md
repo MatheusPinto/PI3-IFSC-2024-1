@@ -445,4 +445,4 @@ Durante o desenvolvimento deste projeto, diversas fontes foram consultadas para 
     Documentação de como executar um módulo visual no Raspberry Pi, com instruções para instalação e configuração.  
     Disponível em: [*Running RPi](https://magic-mirror.readthedocs.io/en/latest/#)
 
-Essas fontes foram essenciais para o desenvolvimento do projeto, oferecendo guias, inspiração e soluções para os desafios enfrentados durante a implementação do Magic Mirror.
+Essas fontes foram essenciais para o desenvolvimento do projeto, oferecendo guias, inspiração e soluções para os desafios enfrentados durante a implementação doprojeto.
