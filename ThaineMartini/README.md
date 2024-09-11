@@ -82,11 +82,44 @@ Figura 1 - Diagrama do hardware
 <p> - Conexões: São as conexões que a placa possui com o meio esterno, primeramente o 4 conectores XT60 que são usados para a conectar a carga (para testes inicias uma carga resistiva), 3 conectores JST-XH de duas vias, um para a alimentação da bomba que auxilia no resfriamento o motor, outro para aferir a temperatura e por último para a ignição do motor, 6 conectores JST-XH de 3 vias sendo, para o esc que vai acionar o BLDC para dar a partida no motor a combustão, para o servo motor que auxilia no controle, um que recebe um pulso da controladora de voo para o acionamento remoto do motor, e dois reservas caso venha a precisar no futuro, alem desses conectores temos nesse bloco um optacoplador para proteção do circuito com o sinal que vem do tacomêtro, um jumper para a alimentação do F280025C caso precise debugar o circuito no computador, um modulo para leitura do cartão SD e dois leds para informações. Para a comunicação com a controladora de voo foi prevista duas conexões, uma por JST-XH  e uma por JST-GH, para conseguir utilizar os dois tipos de controlaora disponiveis no laboratório (cube orange e pixhalk)</p>
 <p> - Condicionamento do Sinal: Contendo dois sinais que precisam ser ajustados para a leitura no F280025C a tensão que passa por um divisor resistivo para diminuir a tensão, um buffer e um filtro Sallen-Key e a corrente que após passar por um sensor de efeito hall (ACS758) passa por um buffer, um circuito somador para amplificar a tensão fornecida pelo sensor e um filtro sallen-key, o detalhemento desses dois circuitos está fornecido na folha de calculos.</p>
 <p></p>
+
 ### Layout
+
 <p>O layout seguiu os seguintes requisitos:</p>
   <p>- Deixar todos os componentes na parte superior da placa assim como os pontos de medição de tensão</p>
   <p>- A parte de potência separada e com menor interatividade com o resto da placa</p>
   <p>- Conectores na borda da placa </p>
   <p>- Malha de potência no barramento (no bloco de alimentação) </p>
   <p align="justify">Os requisitos foram pensados para evitar ruídos indesejados, evitar que a placa sobreaqueça, melhor conexão dos perifericos e para que acaso haja algum problema no futuro seja fácil de encontrar o que está gerando.</p>
+
+### Fabricação 
+
+<p align="justify">Para a montagem da placa, foi utilizado o laboratório de drones, onde possui a infraestrutura e os componentes. Após a montegem foi realizado os testes paralelamente. Primeiramente a montagem dos conversore, depois o circuitos de tensão, o circuito de corrente e por último os circuitos perifericos</p>
+<picture>
+ <img alt="placa montada" src="img/plc.jpeg">
+</picture>
+
+### Validação 
+<p align="justify">A placa tem como objetivo aferir a tensão e a corrente da saída de um sistema motor + gerador, após a medição essa tensão e transformada por meio de um sistema de condicionamento desses sinais, para não causar nenhum dano ao microcontrolador, ja que o seu ADC tem a tensão de entrada maxima de 3V. O circuito montado na placa foi válidado por meio de simulações e calculos anteriomente, mas é necessário válidar através da prática. Para essa validação foi medido, com outro instrumento de medição, a corrente e tensão reais do sistema e as tensões que representam as variaveis no ADC. Para uma analise mais precisa, foram feitas essas aferições 6 vezes, com tensões e correntes diferentes, isso foi possivel associando resistores de potência na saída da placa desenvolvida. Esses dados podem ser melhor análisados a seguir </p>
+ <img alt="tabela dos resultados" src="img/tabela1.png">
+ <p> </p>
+ <img alt="tabela dos resultados" src="img/Tabela2.png">
+ <p> </p>
+<p align="justify">Com esses dados, é possivél plotar uma reta e obter a sua equação, que será utilzada para calcular a corrente e a tensão real, pelo valor lido no ADC. Essa equação será futuramente implementada no microcontrolador. Os gráficos plotados para calcular a equação da reta são mostrados a seguir</p>
+
+<img alt="esultados" src="img/grafico1.png">
+ <p> </p>
+ <img alt="resultados" src="img/grafico2.png">
+ <p> </p>
+ <p align="justify"> Com a equação da reta, calculamos, a partir da tensão no adc a corrente e a tensão no barramento, para comparar com o que foi medido por outro instrumento de medição. Com esses resultados, é possivél calcular o erro desse sistema, validando assim o sistema desenvolvido, como mostra a tabela a seguir.</p>
+ <img alt="tabela dos resultados taotais" src="img/tabeela3.png">
+
+ <p align="justify">Essa tabela comprova a eficiencia da placa, já que o erro é minimo e quase não afeta o resultado final.</p>
+ 
 ### Programação
+
+<p align="justify">Na parte de programação, está sendo desenvolvido um script que faz a leitura do Vbus e do ibat e armazena eles em um arquivo de log. O que se obteve até agora foi apenas efetuar o print na tela dessas tensões lidas, o que já é eficiente para o seu objetivo final.</p>
+
+### Melhorias futuras
+
+<p align="justify">A placa foi desenvolvida com bastantes recursos que ainda não foram aprofundados, futuramente pretendo colocar em prática esses recursos, como controle de servomotor, aferição de temperatura, armazenamento de dados via SDcard. Além da parte de programação que ainda a muito a ser desenvolvida.</p>
