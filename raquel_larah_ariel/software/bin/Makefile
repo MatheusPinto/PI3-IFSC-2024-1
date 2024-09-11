@@ -23,7 +23,7 @@ CFLAGS = \
 LDLIBS = 
 LDFLAGS = -mmcu=atmega328p
 
-OBJ = ds18b20.o onewire.o main_fsm.o main.o termometro.o buttons.o
+OBJ = main.o adc.o aquecimento.o buttons.o eletrodos.o lcd.o motor.o termometro.o timing.o
 
 ifeq ($(LOG), 1)
 OBJ += usart.o 
@@ -32,7 +32,7 @@ else
 CFLAGS += -UDLOG
 endif
 
-vpath %.c ../src ../src/ds18b20
+vpath %.c ../src
 
 ELF := $(OUTNAME).elf
 HEX := $(OUTNAME).hex
@@ -48,7 +48,7 @@ $(HEX): $(ELF)
 	$(OBJCOPY) -R .eeprom -R .fuse -R .lock -R .signature -O ihex $< $@
 
 arduino: $(HEX)
-	$(AVRDUDE) -pm328p -carduino -P COM3 -Uflash:w:$<:a
+	$(AVRDUDE) -pm328p -b57600 -carduino -P COM4 -Uflash:w:$<:a
 
 -include $(OBJ:%.o=%.d)
 

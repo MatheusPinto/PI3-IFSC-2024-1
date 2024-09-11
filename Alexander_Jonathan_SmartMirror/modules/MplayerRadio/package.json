@@ -1,0 +1,32 @@
+{
+  "name": "MplayerRadio",
+  "version": "0.1.4",
+  "description": "A Project module to play radio streams or music files on the mirror. The module can be controlled either by touch or by notifications.",
+  "main": "MplayerRadio.js",
+  "dependencies": {
+    "child_process": "latest"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "MagicMirror",
+    "MM",
+    "sound",
+    "radio",
+    "stream",
+    "audio",
+    "mp3"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:Tom-Hirschberger/MplayerRadio.git"
+  },
+  "author": "Thomas Hirschberger",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Tom-Hirschberger/MplayerRadio/issues"
+  },
+  "homepage": "https://github.com/Tom-Hirschberger/MplayerRadio/#readme"
+}

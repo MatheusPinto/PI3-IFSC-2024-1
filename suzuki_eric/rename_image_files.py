@@ -54,7 +54,7 @@ count = int(
 )
 
 print(os.getcwd())
-breakpoint()
+
 for filename in os.listdir(os.getcwd()):
     with open(os.path.join(os.getcwd(), filename), "r") as f:
         name, _, extension = filename.partition(".")

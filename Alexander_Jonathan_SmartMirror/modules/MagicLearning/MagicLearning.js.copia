@@ -1,0 +1,21 @@
+// helloworld.js
+
+let text = "Hello World! This is Your Module!";
+
+Module.register("MagicLearning", {
+	// Default moodule config
+	defaults: {
+		text: text
+	},
+	
+	// Override dom generator
+	getDom: function () {
+			var wrapper = document.createElement("div");
+			wrapper.innerHTML = this.config.text;
+			return wrapper;
+	},
+	
+	getHeader: function() {
+		return "MagicLearning";
+	}
+});

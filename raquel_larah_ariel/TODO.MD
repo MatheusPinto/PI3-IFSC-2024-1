@@ -1,17 +1,24 @@
-- [ ] Ver o preoblema do display
-- [ ] Ponte H
+- [x] Ver o problema do display
+- [x] Ponte H
   - Simulação
   - Bancada
-- [ ] Fonte de corrente
+- [x] Fonte de corrente
   - Simulação
   - Bancada
-- [ ] Como vamos amostrar a corrrente
-  -  Shunt
+- [ ] 24V é o suficiente para 10mA nos eletrodos?
+- [ ] Medir a tensão nos eletrodos
 - [ ] Relé e acionamento
   - Bancada
-- [ ] continuar o software
-- [ ] Haste
 - [ ] Motor e acionamento
+  - Bancada
+- [ ] Software
+  - [ ] Documentação
+  - [ ] Finalizar a maquina de estados
+  - [ ] ADC
+  - [ ] PWM
+  - [ ] Bug dos botões
+  - [ ] Design
+- [ ] Haste
 - [ ] Partes Fisicas
   - [ ] T-Block
   - [ ] Pinos

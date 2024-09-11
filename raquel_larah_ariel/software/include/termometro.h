@@ -4,16 +4,24 @@
 #include <stdint.h>
 #include <avr/io.h>
 
-#include "main.h"
+#define TERMO_PORT PORTC
+#define TERMO_DDR DDRC
+#define TERMO_PORTIN PINC
+#define TERMO_MASK (1 << PORTC1)
 
-#define TERMO_PORT PORTB
-#define TERMO_DDR DDRB
-#define TERMO_PORTIN PINB
-#define TERMO_MASK (1 << PORTB0)
+typedef enum
+{
+    TERMO_UNINIT,
+    TERMO_BUSY,
+    TERMO_READY,
+    TERMO_ERROR_COM,
+    TERMO_ERROR_PULL,
+    TERMO_ERROR_CRC,
+} termo_result;
 
-extern int16_t termo_temperatura;
-uint8_t termo_process(fsm_handleType *);
-uint8_t termo_next(fsm_handleType *);
-void termo_StartRead();
+termo_result termo_conv();
+termo_result termo_read(int16_t *temperatura);
+void termo_update();
+
 
 #endif

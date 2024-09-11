@@ -1,0 +1,6 @@
+spotify.config.json
+*_token.json
+token_*.json
+
+node_modules
+yarn.lock
